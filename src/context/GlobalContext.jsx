@@ -202,6 +202,7 @@ export function GlobalProvider({ children }) {
       const data = await apiCreateProject({
         name: project_name,
         hidden: false,
+        authorId: customerData.id,
       })
       // console.log(data)
       await apiPatchCustomer(state.customerId, {
@@ -210,15 +211,15 @@ export function GlobalProvider({ children }) {
 
       await apiCreateTaskColumn(data.id, {
         name: "Not Started",
-        position: 1,
+        position: 0,
       })
       await apiCreateTaskColumn(data.id, {
         name: "In Progress",
-        position: 2,
+        position: 1,
       })
       await apiCreateTaskColumn(data.id, {
         name: "Done",
-        position: 3,
+        position: 2,
       })
     } catch (error) {
       console.log(error.message)
@@ -299,12 +300,6 @@ export function GlobalProvider({ children }) {
   }
 
   const handlerCreateTask = async (props) => {
-    console.log("id", props.id)
-    console.log("task name", props.taskName)
-    console.log("des", props.description)
-    console.log("piror", props.priority)
-    console.log("status", props.status)
-
     const codeHeader = projectData.name.slice(0, 3).toUpperCase()
 
     const codeNumber = projectData.taskTotalId + 1
