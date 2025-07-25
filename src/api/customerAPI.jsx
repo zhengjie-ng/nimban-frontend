@@ -1,8 +1,12 @@
 import nimbanAPI from "./nimbanAPI"
 
-export async function apiGetCustomers() {
+export async function apiGetCustomers(email = null) {
   try {
-    const response = await nimbanAPI.get("/customers")
+    const params = {}
+    if (email) {
+      params.email = email
+    }
+    const response = await nimbanAPI.get("/customers", { params })
     return response.data
   } catch (error) {
     console.log(error.message)

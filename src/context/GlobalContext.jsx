@@ -83,8 +83,10 @@ export function GlobalProvider({ children }) {
   const getProjectDataOnLogin = useCallback(async () => {
     console.log("Get project data on login")
     try {
-      const data = await apiGetProject(customerData?.lastAccessedId)
-      setProjectData(data)
+      if (customerData?.lastAccessedId) {
+        const data = await apiGetProject(customerData?.lastAccessedId)
+        setProjectData(data)
+      }
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -143,24 +145,57 @@ export function GlobalProvider({ children }) {
     dispatch({ type: "LOGIN_PASSWORD_INPUT", value: e.target.value })
   }
 
+  // const handlerLoginSubmit = async (e) => {
+  //   e.preventDefault()
+  //   console.log("Logging in")
+
+  //   try {
+  //     const customers = await apiGetCustomers()
+  //     let foundCustomer = null
+
+  //     for (const customer of customers) {
+  //       if (customer.email === state.loginEmailInput) {
+  //         if (customer.password === state.loginPasswordInput) {
+  //           const customerDataRetrieved = await apiGetCustomer(customer.id)
+  //           foundCustomer = customerDataRetrieved
+  //           break
+  //         } else {
+  //           dispatch({ type: "LOGIN_FAILURE", error: "Incorrect Password" })
+  //           return
+  //         }
+  //       }
+  //     }
+
+  //     if (foundCustomer) {
+  //       dispatch({ type: "LOGIN_SUCCESS", customer: foundCustomer })
+  //     } else {
+  //       dispatch({ type: "LOGIN_FAILURE", error: "Email Not Registered" })
+  //     }
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "LOGIN_FAILURE",
+  //       error: "Login failed. Please try again.",
+  //     })
+  //     console.error(error)
+  //   }
+  // }
+
   const handlerLoginSubmit = async (e) => {
     e.preventDefault()
     console.log("Logging in")
 
     try {
-      const customers = await apiGetCustomers()
+      const customers = await apiGetCustomers(state.loginEmailInput)
       let foundCustomer = null
 
-      for (const customer of customers) {
-        if (customer.email === state.loginEmailInput) {
-          if (customer.password === state.loginPasswordInput) {
-            const customerDataRetrieved = await apiGetCustomer(customer.id)
-            foundCustomer = customerDataRetrieved
-            break
-          } else {
-            dispatch({ type: "LOGIN_FAILURE", error: "Incorrect Password" })
-            return
-          }
+      if (customers.length > 0) {
+        const customer = customers[0]
+        if (customer.password === state.loginPasswordInput) {
+          const customerDataRetrieved = await apiGetCustomer(customer.id)
+          foundCustomer = customerDataRetrieved
+        } else {
+          dispatch({ type: "LOGIN_FAILURE", error: "Incorrect Password" })
+          return
         }
       }
 
