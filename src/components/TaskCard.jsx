@@ -2,8 +2,11 @@ import { AiOutlineUp, AiOutlineDown } from "react-icons/ai"
 import { useDraggable } from "@dnd-kit/core"
 import { Label } from "@radix-ui/react-dropdown-menu"
 import { DropTaskOptions } from "./drop-task-options"
+import { useContext } from "react"
+import GlobalContext from "../context/GlobalContext"
 
 function TaskCard({ task }) {
+  const ctx = useContext(GlobalContext)
   const enumStatus = {
     1: (
       <Label className="flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-green-200 p-1 pr-6 pl-4">
@@ -34,6 +37,8 @@ function TaskCard({ task }) {
     },
   })
 
+  const listenersOnState = ctx.enableDrag ? { ...listeners } : undefined
+
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -46,7 +51,7 @@ function TaskCard({ task }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
+      {...listenersOnState}
       {...attributes}
       className="m-4 flex min-h-36 cursor-grab flex-col rounded-2xl bg-white p-4 shadow-md active:cursor-grabbing"
     >

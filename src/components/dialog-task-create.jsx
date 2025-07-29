@@ -26,7 +26,8 @@ export function DialogTaskCreate({ id }) {
   const [status, setStatus] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     ctx.handlerCreateTask({
       id,
       taskName,
@@ -51,14 +52,14 @@ export function DialogTaskCreate({ id }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="w-full">
-            <BiPlusCircle />
-            Task
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button className="w-24">
+          <BiPlusCircle />
+          Task
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Create Task</DialogTitle>
             <DialogDescription>
@@ -96,12 +97,14 @@ export function DialogTaskCreate({ id }) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

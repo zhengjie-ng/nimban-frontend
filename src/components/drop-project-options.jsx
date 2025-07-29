@@ -5,37 +5,39 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
 import GlobalContext from "../context/GlobalContext"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { DialogProjectEdit } from "./dialog-project-edit"
 
 export function DropProjectOptions({ id }) {
   const ctx = useContext(GlobalContext)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleSelect = () => {
+    ctx.handlerSelectProject(id)
+    setIsOpen(false)
+  }
+
+  const handleDelete = () => {
+    ctx.handlerDeleteProject(id)
+    setIsOpen(false)
+  }
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="size-1 text-black/50">
           <CgMoreAlt />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-3" align="start">
-        {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
         <DropdownMenuGroup>
-          <DropdownMenuItem>Select</DropdownMenuItem>
-          <DialogProjectEdit id={id} />
-          <DropdownMenuItem onClick={() => ctx.handlerDeleteProject(id)}>
-            Delete
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSelect}>Select</DropdownMenuItem>
+          <DialogProjectEdit id={id} setIsDropdownOpen={setIsOpen} />
+          <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

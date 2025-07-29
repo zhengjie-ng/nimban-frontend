@@ -27,6 +27,8 @@ function TaskColumn({ taskColumn }) {
     },
   })
 
+  const listenersOnState = ctx.enableDrag ? { ...listeners } : undefined
+
   // droppable for tasks
   const { setNodeRef: setDropRef, isOver } = useDroppable({
     id: taskColumn.id,
@@ -61,7 +63,7 @@ function TaskColumn({ taskColumn }) {
     <div
       ref={combinedRef}
       style={style}
-      {...listeners}
+      {...listenersOnState}
       {...attributes}
       className={`min-h-[60rem] w-96 rounded-3xl bg-gray-50 shadow-lg ${
         isOver ? "bg-gray-100/50" : ""

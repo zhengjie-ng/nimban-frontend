@@ -19,19 +19,22 @@ export function DialogProjectCreate() {
   const [projectName, setProjectName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = () => {
-    ctx.handlerCreateProject(projectName)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    ctx.handlerCreateProject(formData.get("projectName"))
+    // ctx.handlerCreateProject(projectName)
     setIsOpen(false)
     setProjectName("")
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="w-full">Create Project</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button className="w-full">Create Project</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Project Name</DialogTitle>
             <DialogDescription>
@@ -44,25 +47,24 @@ export function DialogProjectCreate() {
               {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
                 id="project-name"
-                name={projectName}
+                name="projectName"
+                value={projectName}
                 placeholder="Enter project name"
                 onChange={(e) => setProjectName(e.target.value)}
                 required
               />
             </div>
-            {/* <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
-            </div> */}
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

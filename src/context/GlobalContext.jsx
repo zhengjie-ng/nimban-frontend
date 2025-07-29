@@ -37,6 +37,7 @@ export function GlobalProvider({ children }) {
   const [customerData, setCustomerData] = useState(null)
   const [projectData, setProjectData] = useState(null)
   const [projectList, setProjectList] = useState(null)
+  const [enableDrag, setEnableDrag] = useState(true)
   const navigate = useNavigate()
 
   const getCustomerData = useCallback(async () => {
@@ -71,14 +72,14 @@ export function GlobalProvider({ children }) {
   const getProjectData = useCallback(async () => {
     console.log("Get project data")
     try {
-      const data = await apiGetProject(state.projectId)
+      const data = await apiGetProject(customerData?.lastAccessedId)
       setProjectData(data)
     } catch (error) {
       console.log(error.message)
     } finally {
       setUpdateProject(false)
     }
-  }, [state.projectId])
+  }, [customerData?.lastAccessedId])
 
   const getProjectDataOnLogin = useCallback(async () => {
     console.log("Get project data on login")
@@ -137,6 +138,13 @@ export function GlobalProvider({ children }) {
     }
   }, [updateProjectList, getProjectList])
 
+  const setDragTrue = () => {
+    setEnableDrag(true)
+  }
+  const setDragFalse = () => {
+    setEnableDrag(false)
+  }
+
   const handlerOnChangeEmailInput = (e) => {
     dispatch({ type: "LOGIN_EMAIL_INPUT", value: e.target.value })
   }
@@ -144,41 +152,6 @@ export function GlobalProvider({ children }) {
   const handlerOnChangePasswordInput = (e) => {
     dispatch({ type: "LOGIN_PASSWORD_INPUT", value: e.target.value })
   }
-
-  // const handlerLoginSubmit = async (e) => {
-  //   e.preventDefault()
-  //   console.log("Logging in")
-
-  //   try {
-  //     const customers = await apiGetCustomers()
-  //     let foundCustomer = null
-
-  //     for (const customer of customers) {
-  //       if (customer.email === state.loginEmailInput) {
-  //         if (customer.password === state.loginPasswordInput) {
-  //           const customerDataRetrieved = await apiGetCustomer(customer.id)
-  //           foundCustomer = customerDataRetrieved
-  //           break
-  //         } else {
-  //           dispatch({ type: "LOGIN_FAILURE", error: "Incorrect Password" })
-  //           return
-  //         }
-  //       }
-  //     }
-
-  //     if (foundCustomer) {
-  //       dispatch({ type: "LOGIN_SUCCESS", customer: foundCustomer })
-  //     } else {
-  //       dispatch({ type: "LOGIN_FAILURE", error: "Email Not Registered" })
-  //     }
-  //   } catch (error) {
-  //     dispatch({
-  //       type: "LOGIN_FAILURE",
-  //       error: "Login failed. Please try again.",
-  //     })
-  //     console.error(error)
-  //   }
-  // }
 
   const handlerLoginSubmit = async (e) => {
     e.preventDefault()
@@ -317,9 +290,7 @@ export function GlobalProvider({ children }) {
     } catch (error) {
       console.log(error.message)
     } finally {
-      // setUpdateCustomer(true)
       setUpdateProject(true)
-      // setProjectData(null)
     }
   }
 
@@ -485,6 +456,9 @@ export function GlobalProvider({ children }) {
     customerData,
     projectData,
     projectList,
+    enableDrag,
+    setDragTrue,
+    setDragFalse,
     handlerOnChangeEmailInput,
     handlerOnChangePasswordInput,
     handlerLoginSubmit,
@@ -500,6 +474,7 @@ export function GlobalProvider({ children }) {
     handlerCreateTask,
     handlerEditTask,
     handlerDeleteTask,
+    setEnableDrag,
   }
 
   return (
