@@ -19,7 +19,6 @@ import {
 } from "@dnd-kit/core"
 import { DialogColumnCreate } from "@/components/dialog-column-create"
 import { DialogTaskCreate } from "@/components/dialog-task-create"
-import { DialogProjectCreate } from "@/components/dialog-project-create"
 import { DialogProjectCreateLarge } from "@/components/dialog-project-create-large"
 
 function HomePage() {
@@ -64,6 +63,7 @@ function HomePage() {
               <DialogColumnCreate id={ctx.projectData?.id} />
             </div>
             <div className="justify-left mt-4 ml-4 flex gap-8">
+              {/* {ctx.enableDrag ? ( */}
               <DndContext
                 onDragEnd={ctx.handlerTaskDragEnd}
                 collisionDetection={closestCenter}
@@ -74,6 +74,13 @@ function HomePage() {
                   <TaskColumn key={taskColumn.id} taskColumn={taskColumn} />
                 ))}
               </DndContext>
+              {/* ) : (
+                <>
+                  {sortedColumns.map((taskColumn) => (
+                    <TaskColumn key={taskColumn.id} taskColumn={taskColumn} />
+                  ))}
+                </>
+              )} */}
             </div>
           </div>
         ) : (

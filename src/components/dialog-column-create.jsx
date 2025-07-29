@@ -20,7 +20,8 @@ export function DialogColumnCreate({ id }) {
   const [columnName, setColumnName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     ctx.handlerCreateColumn({ id, columnName })
     setIsOpen(false)
     setColumnName("")
@@ -28,14 +29,14 @@ export function DialogColumnCreate({ id }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="w-full">
-            <BiPlusCircle />
-            Column
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button className="w-28">
+          <BiPlusCircle />
+          Column
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Create Column</DialogTitle>
             <DialogDescription>
@@ -59,12 +60,14 @@ export function DialogColumnCreate({ id }) {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

@@ -22,8 +22,21 @@ import { DialogTaskEdit } from "./dialog-task-edit"
 export function DropTaskOptions({ id, name, description, priority, status }) {
   const ctx = useContext(GlobalContext)
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleOpenChange = (open) => {
+    if (open) {
+      ctx.setEnableDrag(false)
+      setIsOpen(true)
+      // setTimeout(() => ctx.setEnableDrag(false), 1000)
+    } else {
+      // When closing, first close dropdown then enable drag
+      setIsOpen(false)
+      setTimeout(() => ctx.setEnableDrag(true), 100)
+    }
+  }
+
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="size-1 text-black/50">
           <CgMoreAlt />
@@ -38,7 +51,7 @@ export function DropTaskOptions({ id, name, description, priority, status }) {
             description={description}
             priority={priority}
             status={status}
-            onClick={() => setIsOpen(false)}
+            setIsDropdownOpen={setIsOpen}
           />
           <DropdownMenuItem onClick={() => ctx.handlerDeleteTask(id)}>
             Delete

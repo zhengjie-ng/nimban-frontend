@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import GlobalContext from "../context/GlobalContext"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { Textarea } from "./ui/textarea"
 import { ComboPriorityEdit } from "./combo-priority-edit"
 import { ComboStatusEdit } from "./combo-status-edit"
@@ -51,7 +51,8 @@ export function DialogTaskEdit(props) {
   const [status, setStatus] = useState(props.status)
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     ctx.handlerEditTask({
       id,
       taskName,
@@ -65,17 +66,29 @@ export function DialogTaskEdit(props) {
     })
     setIsOpen(false)
     setTaskName("")
+    props.setIsDropdownOpen(false)
+    ctx.setEnableDrag(true)
   }
+
+  useEffect(() => {
+    if (isOpen === false) {
+      setTaskName(props.name)
+      setDescription(props.description)
+      setPriority(Priorities.find((p) => p.value == props.priority))
+      setStatus(props.status)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="ghost" className="w-full justify-start pl-2">
-            Edit
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button variant="ghost" className="w-full justify-start pl-2">
+          Edit
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
             <DialogDescription>
@@ -115,12 +128,14 @@ export function DialogTaskEdit(props) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }
