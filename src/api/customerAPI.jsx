@@ -30,3 +30,24 @@ export async function apiPatchCustomer(id, props) {
     console.log(error.message)
   }
 }
+
+export async function apiCreateCustomer(props) {
+  try {
+    const response = await nimbanAPI.post(`/customers`, props)
+    return response.data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function apiCheckEmailExists(email) {
+  try {
+    const response = await nimbanAPI.get("/customers", {
+      params: { email },
+    })
+    return response.data.length > 0
+  } catch (error) {
+    console.log(error.message)
+    return false
+  }
+}

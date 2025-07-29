@@ -10,6 +10,7 @@ import {
   apiGetCustomers,
   apiGetCustomer,
   apiPatchCustomer,
+  apiCreateCustomer,
 } from "@/api/customerAPI"
 
 import { useNavigate } from "react-router-dom"
@@ -205,6 +206,16 @@ export function GlobalProvider({ children }) {
     dispatch({ type: "SELECT_PROJECT", value })
   }
 
+  const handlerCreateCustomer = async (props) => {
+    try {
+      await apiCreateCustomer(props)
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      navigate("/")
+    }
+  }
+
   const handlerCreateProject = async (project_name) => {
     try {
       const data = await apiCreateProject({
@@ -214,7 +225,7 @@ export function GlobalProvider({ children }) {
       })
       // console.log(data)
       await apiPatchCustomer(state.customerId, {
-        projectsId: [...customerData.projectsId, data.id],
+        projectsId: [...(customerData?.projectsId || []), data.id],
       })
 
       await apiCreateTaskColumn(data.id, {
@@ -475,6 +486,7 @@ export function GlobalProvider({ children }) {
     handlerEditTask,
     handlerDeleteTask,
     setEnableDrag,
+    handlerCreateCustomer,
   }
 
   return (
