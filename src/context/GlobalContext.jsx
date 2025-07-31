@@ -35,8 +35,10 @@ export function GlobalProvider({ children }) {
   const [updateCustomer, setUpdateCustomer] = useState(false)
   const [updateProject, setUpdateProject] = useState(false)
   const [updateProjectList, setUpdateProjectList] = useState(null)
+  const [updateTaskColumnData, setUpdateTaskColumnData] = useState(null)
   const [customerData, setCustomerData] = useState(null)
   const [projectData, setProjectData] = useState(null)
+  const [taskColumnData, setTaskColumnData] = useState(null)
   const [projectList, setProjectList] = useState(null)
   const [enableDrag, setEnableDrag] = useState(true)
   const navigate = useNavigate()
@@ -79,6 +81,7 @@ export function GlobalProvider({ children }) {
       console.log(error.message)
     } finally {
       setUpdateProject(false)
+      setUpdateTaskColumnData(true)
     }
   }, [customerData?.lastAccessedId])
 
@@ -93,8 +96,32 @@ export function GlobalProvider({ children }) {
       console.log(error.message)
     } finally {
       setUpdateProject(false)
+      setUpdateTaskColumnData(true)
     }
   }, [customerData?.lastAccessedId])
+
+  const getTaskColumnData = () => {
+    console.log("update task column")
+    const columnsData = projectData?.taskColumns
+    const tasksData = projectData?.tasks
+    // setTaskColumnData(data)
+
+    const newData = columnsData?.map((col) => ({
+      ...col,
+      tasks: tasksData.filter((task) => task.statusId === col.id),
+    }))
+    if (newData) {
+      setTaskColumnData(newData)
+    }
+
+    setUpdateTaskColumnData(false)
+  }
+
+  useEffect(() => {
+    if (updateTaskColumnData) {
+      getTaskColumnData()
+    }
+  }, [updateTaskColumnData])
 
   useEffect(() => {
     if (state.isAuthenticated && customerData?.projectsId) {
@@ -202,6 +229,7 @@ export function GlobalProvider({ children }) {
     } finally {
       setUpdateCustomer(true)
       setUpdateProject(true)
+      setUpdateTaskColumnData(true)
     }
     dispatch({ type: "SELECT_PROJECT", value })
   }
@@ -386,23 +414,101 @@ export function GlobalProvider({ children }) {
     // drag task
     if (active.id.startsWith("task-")) {
       const taskId = active.id.replace("task-", "")
-      try {
-        const updatedProjectData = {
-          ...projectData,
-          tasks: projectData.tasks.map((task) =>
-            task.id === parseInt(taskId) ? { ...task, statusId: over.id } : task
-          ),
+      const activeTask = projectData.tasks.find(
+        (task) => task.id === parseInt(taskId)
+      )
+
+      // If moving between columns
+      if (active.data.current?.statusId !== over.id) {
+        try {
+          // Get all tasks in the target column to calculate new position
+          const targetColumnTasks = projectData.tasks
+            .filter((task) => task.statusId === over.id)
+            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+
+          const newPosition =
+            targetColumnTasks.length > 0
+              ? targetColumnTasks[targetColumnTasks.length - 1].position + 1
+              : 0
+
+          const updatedProjectData = {
+            ...projectData,
+            tasks: projectData.tasks.map((task) =>
+              task.id === parseInt(taskId)
+                ? { ...task, statusId: over.id, position: newPosition }
+                : task
+            ),
+          }
+          setProjectData(updatedProjectData)
+          await apiPatchTask(parseInt(taskId), {
+            statusId: over.id,
+            position: newPosition,
+            sortedTimeStamp: new Date(),
+          })
+        } catch (error) {
+          console.error("Failed to update task:", error)
+          setProjectData(projectData)
+        } finally {
+          setUpdateProject(true)
         }
-        setProjectData(updatedProjectData)
-        await apiPatchTask(parseInt(taskId), {
-          statusId: over.id,
-          sortedTimeStamp: new Date(),
-        })
-      } catch (error) {
-        console.error("Failed to update task:", error)
-        setProjectData(projectData)
-      } finally {
-        setUpdateProject(true)
+      }
+      // If moving within the same column
+      else {
+        try {
+          // Get all tasks in the current column, sorted by position
+          const columnTasks = projectData.tasks
+            .filter((task) => task.statusId === over.id)
+            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+
+          // Remove the active task from the array temporarily
+          const filteredTasks = columnTasks.filter(
+            (task) => task.id !== parseInt(taskId)
+          )
+
+          // Find the index where the task should be inserted
+          const overIndex = filteredTasks.findIndex(
+            (task) => `task-${task.id}` === over.id
+          )
+
+          // Calculate new position
+          let newPosition
+          if (overIndex === -1) {
+            // Dropped at the end
+            newPosition =
+              filteredTasks.length > 0
+                ? filteredTasks[filteredTasks.length - 1].position + 1
+                : 0
+          } else if (overIndex === 0) {
+            // Dropped at the beginning
+            newPosition = filteredTasks[0].position - 1
+          } else {
+            // Dropped between two tasks
+            const prevTask = filteredTasks[overIndex - 1]
+            const nextTask = filteredTasks[overIndex]
+            newPosition = (prevTask.position + nextTask.position) / 2
+          }
+
+          // Update the task's position
+          const updatedProjectData = {
+            ...projectData,
+            tasks: projectData.tasks.map((task) =>
+              task.id === parseInt(taskId)
+                ? { ...task, position: newPosition }
+                : task
+            ),
+          }
+          setProjectData(updatedProjectData)
+
+          await apiPatchTask(parseInt(taskId), {
+            position: newPosition,
+            sortedTimeStamp: new Date(),
+          })
+        } catch (error) {
+          console.error("Failed to update task position:", error)
+          setProjectData(projectData)
+        } finally {
+          setUpdateProject(true)
+        }
       }
     }
     // drag column
@@ -412,7 +518,6 @@ export function GlobalProvider({ children }) {
 
       if (draggedColumnId === targetColumnId) return
 
-      // reorder columns in the projectData
       const currentColumns = [...projectData.taskColumns]
       const draggedIndex = currentColumns.findIndex(
         (col) => col.id == draggedColumnId
@@ -423,26 +528,22 @@ export function GlobalProvider({ children }) {
 
       if (draggedIndex === -1 || targetIndex === -1) return
 
-      // remove dragged column and insert at new position
       const [removed] = currentColumns.splice(draggedIndex, 1)
       currentColumns.splice(targetIndex, 0, removed)
 
-      // Update positions based on new order
       const updatedColumns = currentColumns.map((col, index) => ({
         ...col,
         position: index,
       }))
 
-      // update state
       const updatedProjectData = {
         ...projectData,
         taskColumns: updatedColumns,
       }
       setProjectData(updatedProjectData)
+      setUpdateTaskColumnData(true)
 
-      // Update positions in backend
       try {
-        // Batch update all columns' positions
         await Promise.all(
           updatedColumns.map((col) =>
             apiPatchTaskColumn(col.id, { position: col.position })
@@ -450,7 +551,6 @@ export function GlobalProvider({ children }) {
         )
       } catch (error) {
         console.error("Failed to update column positions:", error)
-        // Revert to previous state if update fails
         setProjectData(projectData)
       }
     }
@@ -470,6 +570,7 @@ export function GlobalProvider({ children }) {
     enableDrag,
     setDragTrue,
     setDragFalse,
+    taskColumnData,
     handlerOnChangeEmailInput,
     handlerOnChangePasswordInput,
     handlerLoginSubmit,

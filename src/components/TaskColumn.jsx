@@ -44,9 +44,17 @@ function TaskColumn({ taskColumn }) {
     setDropRef(node)
   }
 
-  const tasks =
-    ctx.projectData?.tasks?.filter((task) => task.statusId === taskColumn.id) ||
-    []
+  // const tasks =
+  //   ctx.projectData?.tasks?.filter((task) => task.statusId === taskColumn.id) ||
+  //   []
+
+  const sortedTasks = taskColumn.tasks
+    ? [...taskColumn.tasks].sort((a, b) => {
+        const posA = a.position ?? 0
+        const posB = b.position ?? 0
+        return posA - posB
+      })
+    : []
 
   const style = transform
     ? {
@@ -55,9 +63,9 @@ function TaskColumn({ taskColumn }) {
       }
     : undefined
 
-  const sortedTasks = tasks.sort(
-    (a, b) => a?.sortedTimeStamp - b?.sortedTimeStamp
-  )
+  // const sortedTasks = tasks.sort(
+  //   (a, b) => a?.sortedTimeStamp - b?.sortedTimeStamp
+  // )
 
   return (
     <div
@@ -71,7 +79,7 @@ function TaskColumn({ taskColumn }) {
     >
       <div className="flex min-h-12 cursor-grab items-center justify-between rounded-3xl rounded-b-none bg-gray-200 p-4 font-medium">
         <div className="flex">
-          {taskColumn.name} ({tasks.length})
+          {taskColumn.name} ({sortedTasks.length})
         </div>
         {/* <Button onClick={() => console.log("Delete Item")}>Delete</Button> */}
         <DropColumnOptions id={taskColumn.id} name={taskColumn.name} />
