@@ -21,9 +21,11 @@ import {
 } from "@/components/ui/popover"
 import Joi from "joi"
 import { apiCheckEmailExists } from "@/api/customerAPI"
+import { useNavigate } from "react-router"
 
 function SignupForm({ className, ...props }) {
   const ctx = useContext(GlobalContext)
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState({
     firstName: "",
@@ -224,7 +226,11 @@ function SignupForm({ className, ...props }) {
                 <Button type="submit" className="w-full">
                   Sign Up
                 </Button>
-                <Button type="button" variant="outline">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/")}
+                >
                   Cancel
                 </Button>
               </div>

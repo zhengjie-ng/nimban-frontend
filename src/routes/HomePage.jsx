@@ -33,8 +33,8 @@ function HomePage() {
   )
 
   // sort columns by position
-  const sortedColumns = ctx.projectData?.taskColumns
-    ? [...ctx.projectData.taskColumns].sort((a, b) => {
+  const sortedColumns = ctx.taskColumnData
+    ? [...ctx.taskColumnData].sort((a, b) => {
         const posA = a.position ?? 0
         const posB = b.position ?? 0
         return posA - posB
