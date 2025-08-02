@@ -41,6 +41,7 @@ export function GlobalProvider({ children }) {
   const [taskColumnData, setTaskColumnData] = useState(null)
   const [projectList, setProjectList] = useState(null)
   const [enableDrag, setEnableDrag] = useState(true)
+  const [projectMates, setProjectMates] = useState([])
   const navigate = useNavigate()
 
   const getCustomerData = useCallback(async () => {
@@ -82,6 +83,7 @@ export function GlobalProvider({ children }) {
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
+      getProjectMates()
     }
   }, [customerData?.lastAccessedId])
 
@@ -97,8 +99,27 @@ export function GlobalProvider({ children }) {
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
+      getProjectMates()
     }
   }, [customerData?.lastAccessedId])
+
+  const getProjectMates = useCallback(async () => {
+    try {
+      const data = await Promise.all(
+        projectData?.teammatesId.map((teammateId) => apiGetCustomer(teammateId))
+      )
+      // Extract only the needed fields
+      const simplifiedMates = data.map((mate) => ({
+        id: mate.id,
+        firstName: mate.firstName,
+        lastName: mate.lastName,
+        email: mate.email,
+      }))
+      setProjectMates(simplifiedMates)
+    } catch (error) {
+      console.error(error.message)
+    }
+  }, [projectData?.teammatesId])
 
   const getTaskColumnData = () => {
     console.log("update task column")
@@ -588,6 +609,7 @@ export function GlobalProvider({ children }) {
     handlerDeleteTask,
     setEnableDrag,
     handlerCreateCustomer,
+    projectMates,
   }
 
   return (
