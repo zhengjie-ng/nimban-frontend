@@ -21,6 +21,9 @@ export function DialogColumnEdit({ id, name, setIsDropdownOpen }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (columnName.length < 3 || columnName.length > 30) {
+      return
+    }
     ctx.handlerEditColumn({ id, columnName })
     // ctx.setDragTrue()
     setIsOpen(false)
@@ -57,8 +60,11 @@ export function DialogColumnEdit({ id, name, setIsDropdownOpen }) {
             <div className="grid gap-3">
               <Input
                 value={columnName}
+                placeholder="Enter column name (3-30 characters)"
                 onChange={(e) => setColumnName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
           </div>

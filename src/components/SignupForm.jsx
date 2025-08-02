@@ -38,14 +38,36 @@ function SignupForm({ className, ...props }) {
 
   const [errors, setErrors] = useState({})
 
+  // const baseSchema = {
+  //   firstName: Joi.string().min(2).required().label("First Name"),
+  //   lastName: Joi.string().min(2).required().label("Last Name"),
+  //   email: Joi.string()
+  //     .email({ tlds: { allow: false } })
+  //     .required()
+  //     .label("Email"),
+  //   password: Joi.string().min(8).required().label("Password"),
+  //   date: Joi.date().required().label("Date of Birth"),
+  // }
+
   const baseSchema = {
-    firstName: Joi.string().min(2).required().label("First Name"),
-    lastName: Joi.string().min(2).required().label("Last Name"),
+    firstName: Joi.string().required().label("First Name"),
+    lastName: Joi.string().required().label("Last Name"),
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .required()
       .label("Email"),
-    password: Joi.string().min(8).required().label("Password"),
+    password: Joi.string()
+      .min(8)
+      .required()
+      .pattern(
+        new RegExp(
+          "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+        )
+      )
+      .message(
+        "Password must include upper and lower case letters, a number, and a special character (@$!%*?&)"
+      )
+      .label("Password"),
     date: Joi.date().required().label("Date of Birth"),
   }
 

@@ -31,6 +31,15 @@ export async function apiPatchCustomer(id, props) {
   }
 }
 
+export async function apiUpdateCustomer(id, props) {
+  try {
+    const response = await nimbanAPI.patch(`/customers/${id}`, props)
+    return response.data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
 export async function apiCreateCustomer(props) {
   try {
     const response = await nimbanAPI.post(`/customers`, props)

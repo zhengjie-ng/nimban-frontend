@@ -71,8 +71,10 @@ function TaskCard({ task }) {
           status={task.statusId}
         />
       </div>
-      <div className="text-sm text-gray-600">{task.description}</div>
-      <div className="mt-10 flex flex-row justify-between">
+      <div className="max-h-30 min-h-15 overflow-y-auto text-sm whitespace-pre-line text-gray-600">
+        {task.description}
+      </div>
+      <div className="mt-4 flex flex-row justify-between">
         <div className="text-sm text-gray-500">{enumStatus[task.priority]}</div>
         <div className="text-gray-400">{task.code}</div>
       </div>
