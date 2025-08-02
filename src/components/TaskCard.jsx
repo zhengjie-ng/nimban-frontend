@@ -9,21 +9,26 @@ function TaskCard({ task }) {
   const ctx = useContext(GlobalContext)
   const enumStatus = {
     1: (
+      <Label className="flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-gray-200 p-1 pr-6 pl-4">
+        <AiOutlineDown /> Optional
+      </Label>
+    ),
+    2: (
       <Label className="flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-green-200 p-1 pr-6 pl-4">
         <AiOutlineDown /> Low
       </Label>
     ),
-    2: (
+    3: (
       <Label className="flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-yellow-200 p-1 pr-6 pl-4">
         = Medium
       </Label>
     ),
-    3: (
+    4: (
       <Label className="flex max-w-22 items-center justify-center gap-1 rounded-2xl bg-red-200 p-1 pr-6 pl-4">
         <AiOutlineUp /> High
       </Label>
     ),
-    4: (
+    5: (
       <Label className="flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-purple-200 p-1 pr-6 pl-4">
         ! Critical
       </Label>

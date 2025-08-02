@@ -18,31 +18,39 @@ import {
 } from "@/components/ui/popover"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
-
 const Priorities = [
   {
     value: "1",
+    label: "Optional",
+    color: "gray",
+  },
+  {
+    value: "2",
     label: "Low",
     color: "green",
   },
   {
-    value: "2",
+    value: "3",
     label: "Medium",
     color: "yellow",
   },
   {
-    value: "3",
+    value: "4",
     label: "High",
     color: "red",
   },
   {
-    value: "4",
+    value: "5",
     label: "Critical",
     color: "purple",
   },
 ]
 
 const colorClasses = {
+  gray: {
+    base: "bg-gray-200",
+    hover: "hover:bg-gray-200/80",
+  },
   green: {
     base: "bg-green-200",
     hover: "hover:bg-green-200/80",
