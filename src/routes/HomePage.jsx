@@ -1,5 +1,5 @@
 import GlobalContext from "@/context/GlobalContext"
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
 import {

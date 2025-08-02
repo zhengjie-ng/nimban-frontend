@@ -20,21 +20,26 @@ import { ComboStatusEdit } from "./combo-status-edit"
 const Priorities = [
   {
     value: "1",
+    label: "Optional",
+    color: "gray",
+  },
+  {
+    value: "2",
     label: "Low",
     color: "green",
   },
   {
-    value: "2",
+    value: "3",
     label: "Medium",
     color: "yellow",
   },
   {
-    value: "3",
+    value: "4",
     label: "High",
     color: "red",
   },
   {
-    value: "4",
+    value: "5",
     label: "Critical",
     color: "purple",
   },
@@ -53,6 +58,10 @@ export function DialogTaskEdit(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (taskName.length < 3 || taskName.length > 30) {
+      return
+    }
+
     ctx.handlerEditTask({
       id,
       taskName,
@@ -101,10 +110,12 @@ export function DialogTaskEdit(props) {
             <div className="grid gap-3">
               {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
-                placeholder="Enter task name"
+                placeholder="Enter task name (3-30 characters)"
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
           </div>

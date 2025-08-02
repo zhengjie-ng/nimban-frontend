@@ -19,24 +19,39 @@ export function DialogProjectCreateLarge() {
   const [projectName, setProjectName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = () => {
-    ctx.handlerCreateProject(projectName)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (projectName.length < 3 || projectName.length > 30) {
+      // setError("Project name must be between 3 to 30 characters")
+      return
+    }
+    const formData = new FormData(e.target)
+    ctx.handlerCreateProject(formData.get("projectName"))
     setIsOpen(false)
     setProjectName("")
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <form>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="h-full w-full sm:text-3xl lg:rounded-3xl lg:p-10 lg:text-5xl"
-          >
-            Create Project To Get Started
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        if (!open) {
+          // setError("")
+          setProjectName("")
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="sm:h-16 sm:w-120 sm:text-3xl lg:h-32 lg:w-200 lg:rounded-3xl lg:p-10 lg:text-5xl"
+        >
+          Create Project To Get Started
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Project Name</DialogTitle>
             <DialogDescription>
@@ -46,28 +61,26 @@ export function DialogProjectCreateLarge() {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
                 id="project-name"
-                name={projectName}
-                placeholder="Enter project name"
+                name="projectName"
+                value={projectName}
+                placeholder="Enter project name (3-30 characters)"
                 onChange={(e) => setProjectName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
-            {/* <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
-            </div> */}
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

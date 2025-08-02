@@ -21,15 +21,28 @@ export function DialogProjectCreate() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    if (projectName.length < 3 || projectName.length > 30) {
+      return
+    }
+
+    // setError("")
     const formData = new FormData(e.target)
     ctx.handlerCreateProject(formData.get("projectName"))
-    // ctx.handlerCreateProject(projectName)
     setIsOpen(false)
     setProjectName("")
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        if (!open) {
+          setProjectName("")
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="w-full">Create Project</Button>
       </DialogTrigger>
@@ -37,22 +50,27 @@ export function DialogProjectCreate() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Project Name</DialogTitle>
-            <DialogDescription>
-              {/* Make changes to your profile here. Click save when you&apos;re
-              done. */}
-            </DialogDescription>
+            {/* <DialogDescription>
+              Enter a name between 3 to 30 characters
+            </DialogDescription> */}
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
                 id="project-name"
                 name="projectName"
                 value={projectName}
-                placeholder="Enter project name"
-                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="Enter project name (3-30 characters)"
+                onChange={(e) => {
+                  setProjectName(e.target.value)
+
+                  // if (error) setError("")
+                }}
                 required
+                minLength={3}
+                maxLength={30}
               />
+              {/* {error && <p className="text-sm text-red-500">{error}</p>} */}
             </div>
           </div>
           <DialogFooter>

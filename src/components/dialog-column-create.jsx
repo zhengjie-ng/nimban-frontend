@@ -22,13 +22,27 @@ export function DialogColumnCreate({ id }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (columnName.length < 3 || columnName.length > 30) {
+      return
+    }
+
+    const formData = new FormData(e.target).get("columnName")
+    console.log(formData)
     ctx.handlerCreateColumn({ id, columnName })
     setIsOpen(false)
     setColumnName("")
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        if (!open) {
+          setColumnName("")
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="w-28">
           <BiPlusCircle />
@@ -48,9 +62,14 @@ export function DialogColumnCreate({ id }) {
             <div className="grid gap-3">
               {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
-                placeholder="Enter column name"
+                id="column-name"
+                name="columnName"
+                value={columnName}
+                placeholder="Enter column name (3-30 characters)"
                 onChange={(e) => setColumnName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
             {/* <div className="grid gap-3">

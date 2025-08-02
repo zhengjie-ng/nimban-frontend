@@ -23,6 +23,12 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    if (projectName.length < 3 || projectName.length > 30) {
+      return
+    }
+
+    e.preventDefault()
     ctx.handlerEditProject({ id, projectName })
     setIsOpen(false)
     setProjectName("")
@@ -57,8 +63,11 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
             <div className="grid gap-3">
               <Input
                 value={projectName}
+                placeholder="Enter project name (3-30 characters)"
                 onChange={(e) => setProjectName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
           </div>

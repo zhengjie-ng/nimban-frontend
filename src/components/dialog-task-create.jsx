@@ -28,16 +28,37 @@ export function DialogTaskCreate({ id }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (taskName.length < 3 || taskName.length > 30) {
+      return
+    }
+
+    let new_position = null
+    if (status) {
+      const column = ctx.taskColumnData.find(
+        (taskColumn) => taskColumn.id === status
+      )
+
+      new_position = column.tasks.length + 1
+      console.log(new_position)
+    } else if (!status) {
+      const column = ctx.taskColumnData.find(
+        (taskColumn) => taskColumn.position === 0
+      )
+      new_position = column.tasks.length + 1
+      console.log(new_position)
+    }
+
     ctx.handlerCreateTask({
       id,
       taskName,
       description,
-      priority: priority?.value || 1,
+      priority: priority?.value || 3,
       status:
         status ||
         ctx.projectData.taskColumns.find(
           (taskColumn) => taskColumn.position === 0
         ).id,
+      position: new_position,
     })
     setIsOpen(false)
     setTaskName("")
@@ -72,9 +93,11 @@ export function DialogTaskCreate({ id }) {
             <div className="grid gap-3">
               {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
-                placeholder="Enter task name"
+                placeholder="Enter task name (3-30 characters)"
                 onChange={(e) => setTaskName(e.target.value)}
                 required
+                minLength={3}
+                maxLength={30}
               />
             </div>
           </div>

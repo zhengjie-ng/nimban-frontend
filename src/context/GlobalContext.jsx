@@ -9,8 +9,8 @@ import { globalReducer, defaultProduct } from "../reducers/GlobalReducers"
 import {
   apiGetCustomers,
   apiGetCustomer,
-  apiPatchCustomer,
   apiCreateCustomer,
+  apiUpdateCustomer,
 } from "@/api/customerAPI"
 
 import { useNavigate } from "react-router-dom"
@@ -83,7 +83,7 @@ export function GlobalProvider({ children }) {
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
-      getProjectMates()
+      // getProjectMates()
     }
   }, [customerData?.lastAccessedId])
 
@@ -99,7 +99,7 @@ export function GlobalProvider({ children }) {
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
-      getProjectMates()
+      // getProjectMates()
     }
   }, [customerData?.lastAccessedId])
 
@@ -137,6 +137,12 @@ export function GlobalProvider({ children }) {
 
     setUpdateTaskColumnData(false)
   }
+
+  useEffect(() => {
+    if (projectData) {
+      getProjectMates()
+    }
+  }, [projectData])
 
   useEffect(() => {
     if (updateTaskColumnData) {
@@ -242,7 +248,8 @@ export function GlobalProvider({ children }) {
 
   const handlerSelectProject = async (value) => {
     try {
-      await apiPatchCustomer(state.customerId, {
+      await apiUpdateCustomer(state.customerId, {
+        ...customerData,
         lastAccessedId: value,
       })
     } catch (error) {
@@ -254,7 +261,6 @@ export function GlobalProvider({ children }) {
     }
     dispatch({ type: "SELECT_PROJECT", value })
   }
-
   const handlerCreateCustomer = async (props) => {
     try {
       await apiCreateCustomer(props)
@@ -271,9 +277,12 @@ export function GlobalProvider({ children }) {
         name: project_name,
         hidden: false,
         authorId: customerData.id,
+        teammatesId: [customerData.id],
+        taskTotalId: 0,
       })
       // console.log(data)
-      await apiPatchCustomer(state.customerId, {
+      await apiUpdateCustomer(state.customerId, {
+        ...customerData,
         projectsId: [...(customerData?.projectsId || []), data.id],
       })
 
@@ -299,7 +308,8 @@ export function GlobalProvider({ children }) {
 
   const handlerDeleteProject = async (id) => {
     try {
-      await apiPatchCustomer(state.customerId, {
+      await apiUpdateCustomer(state.customerId, {
+        ...customerData,
         projectsId: customerData.projectsId.filter(
           (projectId) => projectId !== id
         ),
@@ -316,9 +326,7 @@ export function GlobalProvider({ children }) {
 
   const handlerEditProject = async ({ id, projectName }) => {
     try {
-      await apiPatchProject(id, {
-        name: projectName,
-      })
+      await apiPatchProject(id, { ...projectData, name: projectName })
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -345,6 +353,7 @@ export function GlobalProvider({ children }) {
   const handlerEditColumn = async ({ id, columnName }) => {
     try {
       await apiPatchTaskColumn(id, {
+        ...taskColumnData.find((col) => col.id === id),
         name: columnName,
       })
     } catch (error) {
@@ -375,13 +384,18 @@ export function GlobalProvider({ children }) {
     console.log(codeHeader + "_" + codeNumberPadding)
 
     try {
-      await apiCreateTask(props.id, {
+      const data = {
         name: props.taskName,
         code: codeHeader + "_" + codeNumberPadding,
         priority: props.priority,
         statusId: props.status,
         description: props.description,
-      })
+        position: props.position,
+        assigneesId: [],
+      }
+      console.log(data)
+
+      await apiCreateTask(props.id, data)
     } catch (error) {
       console.log(error.message)
     } finally {
