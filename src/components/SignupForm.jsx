@@ -38,17 +38,6 @@ function SignupForm({ className, ...props }) {
 
   const [errors, setErrors] = useState({})
 
-  // const baseSchema = {
-  //   firstName: Joi.string().min(2).required().label("First Name"),
-  //   lastName: Joi.string().min(2).required().label("Last Name"),
-  //   email: Joi.string()
-  //     .email({ tlds: { allow: false } })
-  //     .required()
-  //     .label("Email"),
-  //   password: Joi.string().min(8).required().label("Password"),
-  //   date: Joi.date().required().label("Date of Birth"),
-  // }
-
   const baseSchema = {
     firstName: Joi.string().required().label("First Name"),
     lastName: Joi.string().required().label("Last Name"),
@@ -127,6 +116,7 @@ function SignupForm({ className, ...props }) {
     let { date, ...newUserData } = user
     newUserData = {
       ...newUserData,
+      email: user.email.toLowerCase().trim(),
       birthYear: date.getFullYear(),
       birthMonth: date.getMonth() + 1,
       birthDay: date.getDate(),

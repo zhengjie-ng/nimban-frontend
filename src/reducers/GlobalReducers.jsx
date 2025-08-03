@@ -30,7 +30,13 @@ export function globalReducer(state, action) {
       return { ...state, loginErrorMsg: action.error }
 
     case "LOGOUT":
-      return { ...state, isAuthenticated: false }
+      return {
+        ...state,
+        isAuthenticated: false,
+        customerId: null,
+        projectId: null,
+        activeProject: null,
+      }
 
     case "SELECT_PROJECT":
       return { ...state, projectId: action.value }
