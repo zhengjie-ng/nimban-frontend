@@ -243,6 +243,11 @@ export function GlobalProvider({ children }) {
 
   const handlerLogout = () => {
     navigate("/")
+    setProjectData(null)
+    setCustomerData(null)
+    setProjectList(null)
+    setProjectMates(null)
+    setTaskColumnData(null)
     dispatch({ type: "LOGOUT" })
   }
 
@@ -440,6 +445,80 @@ export function GlobalProvider({ children }) {
       setUpdateProject(true)
     }
   }
+  const handlerInviteProjectmate = async ({ id, projectMateEmail }) => {
+    try {
+      const projectmate = await apiGetCustomers(
+        projectMateEmail.toLowerCase().trim()
+      )
+
+      if (!projectmate || projectmate.length === 0) {
+        throw new Error("User with this email not found")
+      }
+
+      const mate = projectmate[0]
+
+      // 1. Add project to mate's projectsId array (if not already present)
+      const updatedMateProjects = mate.projectsId
+        ? [...mate.projectsId, id]
+        : [id]
+
+      await apiUpdateCustomer(mate.id, {
+        ...mate,
+        projectsId: updatedMateProjects,
+      })
+
+      // 2. Add mate to project's teammatesId array
+      const updatedProjectTeammates = projectData.teammatesId
+        ? [...projectData.teammatesId, mate.id]
+        : [mate.id]
+
+      await apiPatchProject(id, {
+        ...projectData,
+        teammatesId: updatedProjectTeammates,
+      })
+
+      // Refresh data
+      setUpdateCustomer(true)
+      setUpdateProject(true)
+    } catch (error) {
+      console.error("Failed to invite project mate:", error.message)
+      throw error // Re-throw to handle in the component
+    }
+  }
+
+  const handlerRemoveProjectmate = async (projectmateId) => {
+    try {
+      const projectId = projectData.id
+
+      // 1. Get the project mate's data
+      const mate = await apiGetCustomer(projectmateId)
+
+      // 2. Remove project from mate's projectsId array
+      const updatedMateProjects =
+        mate.projectsId?.filter((id) => id !== projectId) || []
+      await apiUpdateCustomer(mate.id, {
+        ...mate,
+        projectsId: updatedMateProjects,
+      })
+
+      // 3. Remove mate from project's teammatesId array
+      const updatedProjectTeammates =
+        projectData.teammatesId?.filter((id) => id !== projectmateId) || []
+      await apiPatchProject(projectId, {
+        ...projectData,
+        teammatesId: updatedProjectTeammates,
+      })
+
+      // Refresh data
+      setUpdateCustomer(true)
+      setUpdateProject(true)
+
+      return true // Indicate success
+    } catch (error) {
+      console.error("Failed to remove project mate:", error.message)
+      throw error // Re-throw to handle in the component
+    }
+  }
 
   const handlerTaskDragEnd = async (event) => {
     const { active, over } = event
@@ -624,6 +703,8 @@ export function GlobalProvider({ children }) {
     setEnableDrag,
     handlerCreateCustomer,
     projectMates,
+    handlerInviteProjectmate,
+    handlerRemoveProjectmate,
   }
 
   return (

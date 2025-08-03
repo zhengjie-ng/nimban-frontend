@@ -21,6 +21,7 @@ import { DialogColumnCreate } from "@/components/dialog-column-create"
 import { DialogTaskCreate } from "@/components/dialog-task-create"
 import { DialogProjectCreateLarge } from "@/components/dialog-project-create-large"
 import { BiPlusCircle } from "react-icons/bi"
+import { DialogProjectMatesInvite } from "@/components/dialog-projectmates-invite"
 
 function HomePage() {
   const ctx = useContext(GlobalContext)
@@ -62,7 +63,8 @@ function HomePage() {
             <div className="mt-4 ml-4 flex items-center gap-3">
               <DialogTaskCreate id={ctx.projectData?.id} />
               <DialogColumnCreate id={ctx.projectData?.id} />
-              <div className="flex items-center gap-2 rounded-2xl border-1 p-1">
+              <DialogProjectMatesInvite id={ctx.projectData?.id} />
+              {/* <div className="flex items-center gap-2 rounded-2xl border-1 p-1">
                 <BiPlusCircle className="text-gray-500" />
                 <div className="flex gap-1">
                   {ctx.projectMates.map((projectMate) => (
@@ -72,7 +74,7 @@ function HomePage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="justify-left mt-4 ml-4 flex gap-8">
               {/* {ctx.enableDrag ? ( */}
