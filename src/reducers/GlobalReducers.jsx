@@ -11,10 +11,10 @@ export const defaultProduct = {
 export function globalReducer(state, action) {
   switch (action.type) {
     case "LOGIN_EMAIL_INPUT":
-      return { ...state, loginEmailInput: action.value }
+      return { ...state, loginEmailInput: action.value, loginErrorMsg: "" }
 
     case "LOGIN_PASSWORD_INPUT":
-      return { ...state, loginPasswordInput: action.value }
+      return { ...state, loginPasswordInput: action.value, loginErrorMsg: "" }
 
     case "LOGIN_SUCCESS":
       return {
