@@ -10,7 +10,9 @@ function ProjectMateCard({ props }) {
           {props.firstName.slice(0, 1) + props.lastName.slice(0, 1)}
         </div>
         <div className="flex flex-col">
-          <div className="text-[0.9rem]">{props.firstName}</div>
+          <div className="text-[0.9rem]">
+            {props.firstName} {props.lastName}
+          </div>
           <div className="text-[0.7rem] text-gray-800">{props.email}</div>
         </div>
       </div>

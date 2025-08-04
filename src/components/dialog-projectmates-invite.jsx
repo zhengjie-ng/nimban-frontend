@@ -86,8 +86,10 @@ export function DialogProjectMatesInvite({ id }) {
                   key={projectMate.id}
                   className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800"
                 >
-                  {projectMate.firstName.slice(0, 1) +
-                    projectMate.lastName.slice(0, 1)}
+                  {(
+                    projectMate.firstName.slice(0, 1) +
+                    projectMate.lastName.slice(0, 1)
+                  ).toUpperCase()}
                 </div>
               ))}
             </div>

@@ -396,7 +396,7 @@ export function GlobalProvider({ children }) {
         statusId: props.status,
         description: props.description,
         position: props.position,
-        assigneesId: [],
+        assigneesId: props.assigneesId,
       }
       console.log(data)
 
@@ -426,6 +426,7 @@ export function GlobalProvider({ children }) {
         priority: props.priority,
         statusId: props.status,
         description: props.description,
+        assigneesId: props.assigneesId,
       })
     } catch (error) {
       console.log(error.message)

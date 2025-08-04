@@ -16,8 +16,6 @@ import { useContext, useState, useEffect } from "react"
 import { Textarea } from "./ui/textarea"
 import { ComboPriorityEdit } from "./combo-priority-edit"
 import { ComboStatusEdit } from "./combo-status-edit"
-import Select from "react-select"
-import makeAnimated from "react-select/animated"
 
 const Priorities = [
   {
@@ -47,8 +45,6 @@ const Priorities = [
   },
 ]
 
-const animatedComponents = makeAnimated()
-
 export function DialogTaskEdit(props) {
   const ctx = useContext(GlobalContext)
   const id = props.id
@@ -59,27 +55,6 @@ export function DialogTaskEdit(props) {
   )
   const [status, setStatus] = useState(props.status)
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedAssignees, setSelectedAssignees] = useState([])
-
-  // Format project mates for react-select
-  const assigneeOptions =
-    ctx.projectMates?.map((mate) => ({
-      value: mate.id,
-      label: `${mate.firstName} ${mate.lastName}`,
-    })) || []
-
-  // Get current task's assignees and set them as initial selected values
-  useEffect(() => {
-    if (isOpen && ctx.projectMates) {
-      const currentTask = ctx.projectData?.tasks.find((task) => task.id === id)
-      const initialAssignees = currentTask?.assigneesId || []
-
-      const initialSelected = assigneeOptions.filter((option) =>
-        initialAssignees.includes(option.value)
-      )
-      setSelectedAssignees(initialSelected)
-    }
-  }, [isOpen, ctx.projectMates, ctx.projectData, id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -97,7 +72,6 @@ export function DialogTaskEdit(props) {
         ctx.projectData.taskColumns.find(
           (taskColumn) => taskColumn.position === 0
         ).id,
-      assigneesId: selectedAssignees.map((assignee) => assignee.value),
     })
     setIsOpen(false)
     setTaskName("")
@@ -112,7 +86,8 @@ export function DialogTaskEdit(props) {
       setPriority(Priorities.find((p) => p.value == props.priority))
       setStatus(props.status)
     }
-  }, [isOpen, props.name, props.description, props.priority, props.status])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -126,12 +101,14 @@ export function DialogTaskEdit(props) {
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
             <DialogDescription>
-              {/* Make changes to your profile here. Click save when you&apos;re done. */}
+              {/* Make changes to your profile here. Click save when you&apos;re
+              done. */}
             </DialogDescription>
           </DialogHeader>
           <Label>Name</Label>
           <div className="grid gap-4">
             <div className="grid gap-3">
+              {/* <Label htmlFor="name-1">Name</Label> */}
               <Input
                 placeholder="Enter task name (3-30 characters)"
                 value={taskName}
@@ -149,38 +126,6 @@ export function DialogTaskEdit(props) {
             placeholder="Enter task description"
             onChange={(e) => setDescription(e.target.value)}
           />
-          <div className="flex flex-col gap-2">
-            <Label>Assignees</Label>
-            <Select
-              isMulti
-              name="assignees"
-              options={assigneeOptions}
-              value={selectedAssignees}
-              onChange={setSelectedAssignees}
-              className="text-sm"
-              // className="basic-multi-select"
-              classNamePrefix="select"
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              placeholder="Select assignees..."
-              styles={{
-                control: (baseStyles, state) => ({
-                  ...baseStyles,
-                  borderColor: state.isFocused
-                    ? "#a855f7"
-                    : baseStyles.borderColor, // purple-600
-                  boxShadow: state.isFocused
-                    ? "0 0 0 1px #a855f7"
-                    : baseStyles.boxShadow,
-                  "&:hover": {
-                    borderColor: state.isFocused
-                      ? "#a855f7"
-                      : baseStyles.borderColor,
-                  },
-                }),
-              }}
-            />
-          </div>
           <div className="flex gap-2">
             <ComboPriorityEdit
               parentPriority={priority}

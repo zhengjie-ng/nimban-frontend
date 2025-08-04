@@ -52,6 +52,12 @@ function TaskCard({ task }) {
       }
     : undefined
 
+  const filterAssignees = ctx.projectMates.filter((mate) =>
+    task.assigneesId.includes(mate.id)
+  )
+
+  console.log("filterAssignees", filterAssignees)
+
   return (
     <div
       ref={setNodeRef}
@@ -74,7 +80,19 @@ function TaskCard({ task }) {
       <div className="max-h-30 min-h-15 overflow-y-auto text-sm whitespace-pre-line text-gray-600">
         {task.description}
       </div>
-      <div className="mt-4 flex flex-row justify-between">
+      <div className="flex gap-1">
+        {filterAssignees.map((assignee) => (
+          <span
+            key={assignee.id}
+            className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800"
+          >
+            {(
+              assignee.firstName.slice(0, 1) + assignee.lastName.slice(0, 1)
+            ).toUpperCase()}
+          </span>
+        ))}
+      </div>
+      <div className="mt-2 flex flex-row justify-between">
         <div className="text-sm text-gray-500">{enumStatus[task.priority]}</div>
         <div className="text-gray-400">{task.code}</div>
       </div>
