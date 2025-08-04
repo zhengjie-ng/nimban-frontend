@@ -20,16 +20,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import Joi from "joi"
-import { apiCheckEmailExists } from "@/api/customerAPI"
+import { apiCheckEmailExists, apiGetCustomers } from "@/api/customerAPI"
 import { useNavigate } from "react-router"
 
-function SignupForm({ className, ...props }) {
+function ForgetPasswordPageForm({ className, ...props }) {
   const ctx = useContext(GlobalContext)
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
     password: "",
     date: null,
@@ -39,12 +37,11 @@ function SignupForm({ className, ...props }) {
   const [errors, setErrors] = useState({})
 
   const baseSchema = {
-    firstName: Joi.string().required().label("First Name"),
-    lastName: Joi.string().required().label("Last Name"),
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .required()
       .label("Email"),
+    date: Joi.date().required().label("Date of Birth"),
     password: Joi.string()
       .min(8)
       .required()
@@ -57,7 +54,6 @@ function SignupForm({ className, ...props }) {
         "Password must include upper and lower case letters, a number, and a special character (@$!%*?&)"
       )
       .label("Password"),
-    date: Joi.date().required().label("Date of Birth"),
   }
 
   const validate = async () => {
@@ -74,16 +70,43 @@ function SignupForm({ className, ...props }) {
 
     if (user.email) {
       setIsCheckingEmail(true)
+      console.log("check email")
       try {
         const exists = await apiCheckEmailExists(user.email)
-        if (exists) {
-          return { email: "Email is already in use" }
+        if (!exists) {
+          return { email: "Email is not registered." }
         }
       } catch (error) {
         console.error("Error checking email:", error)
         return { email: "Error checking email availability" }
       } finally {
         setIsCheckingEmail(false)
+      }
+
+      if (user.date) {
+        const inputDate = {
+          birthYear: user.date.getFullYear(),
+          birthMonth: user.date.getMonth() + 1,
+          birthDay: user.date.getDate(),
+        }
+        // console.log(inputDate)
+        try {
+          const dbUser = await apiGetCustomers(user.email)
+          const dbUserBirthDate = {
+            birthYear: dbUser[0].birthYear,
+            birthMonth: dbUser[0].birthMonth,
+            birthDay: dbUser[0].birthDay,
+          }
+          if (
+            inputDate.birthYear !== dbUserBirthDate.birthYear ||
+            inputDate.birthMonth !== dbUserBirthDate.birthMonth ||
+            inputDate.birthDay !== dbUserBirthDate.birthDay
+          ) {
+            return { date: "Birth date does not match our records" }
+          }
+        } catch (error) {
+          console.log(error.message)
+        }
       }
     }
 
@@ -118,6 +141,7 @@ function SignupForm({ className, ...props }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    console.log("submit")
     const errors = await validate()
 
     if (errors) {
@@ -127,60 +151,42 @@ function SignupForm({ className, ...props }) {
 
     setErrors({})
     // eslint-disable-next-line no-unused-vars
-    let { date, ...newUserData } = user
-    newUserData = {
-      ...newUserData,
+    // let { date, ...newUserData } = user
+    const newUserData = {
       email: user.email.toLowerCase().trim(),
-      birthYear: date.getFullYear(),
-      birthMonth: date.getMonth() + 1,
-      birthDay: date.getDate(),
+      password: user.password,
     }
-    ctx.handlerCreateCustomer(newUserData)
+    ctx.handlerResetPassword(newUserData)
   }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
+          <CardTitle>Reset Your Password</CardTitle>
           <CardDescription>
-            Please fill in this form to create an account
+            Enter the email associated with your account, birth date for
+            verification and new password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    placeholder="First Name"
-                    value={user.firstName}
-                    onChange={handleChange}
-                  />
-                  {errors.firstName && (
-                    <p className="mt-1 text-xs text-red-500">
-                      {errors.firstName}
-                    </p>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    placeholder="Last Name"
-                    value={user.lastName}
-                    onChange={handleChange}
-                  />
-                  {errors.lastName && (
-                    <p className="mt-1 text-xs text-red-500">
-                      {errors.lastName}
-                    </p>
-                  )}
-                </div>
+              <div>
+                <Input
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  value={user.email}
+                  onChange={handleChange}
+                  disabled={isCheckingEmail}
+                />
+                {isCheckingEmail ? (
+                  <p className="mt-1 text-xs text-blue-500">Checking email</p>
+                ) : errors.email ? (
+                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                ) : null}
               </div>
-
               <div>
                 <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
@@ -218,28 +224,10 @@ function SignupForm({ className, ...props }) {
 
               <div>
                 <Input
-                  id="email"
-                  name="email"
-                  placeholder="Email"
-                  value={user.email}
-                  onChange={handleChange}
-                  disabled={isCheckingEmail}
-                />
-                {isCheckingEmail ? (
-                  <p className="mt-1 text-xs text-blue-500">
-                    Checking email availability...
-                  </p>
-                ) : errors.email ? (
-                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-                ) : null}
-              </div>
-
-              <div>
-                <Input
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder="New Password"
                   value={user.password}
                   onChange={handleChange}
                 />
@@ -250,14 +238,14 @@ function SignupForm({ className, ...props }) {
 
               <div className="flex flex-col gap-1">
                 <Button type="submit" className="w-full">
-                  Sign Up
+                  Reset
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate("/")}
                 >
-                  Cancel
+                  Return to Sign in
                 </Button>
               </div>
             </div>
@@ -268,4 +256,4 @@ function SignupForm({ className, ...props }) {
   )
 }
 
-export default SignupForm
+export default ForgetPasswordPageForm

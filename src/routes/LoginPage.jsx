@@ -17,7 +17,7 @@ function LoginPage() {
           Nimban
         </a>
         {ctx.loginErrorMsg && (
-          <div className="flex items-center justify-center gap-1 rounded-sm border-1 border-red-300 bg-red-100 p-2 text-red-400">
+          <div className="flex items-center justify-center gap-1 rounded-md border-1 border-red-300 bg-red-100 p-2 text-sm text-red-400">
             <RiErrorWarningLine className="size-6" />
             {ctx.loginErrorMsg}
           </div>
