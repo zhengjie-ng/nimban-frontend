@@ -52,11 +52,11 @@ function TaskCard({ task }) {
       }
     : undefined
 
-  const filterAssignees = ctx.projectMates.filter((mate) =>
-    task.assigneesId.includes(mate.id)
+  const filterAssignees = ctx.projectMates?.filter((mate) =>
+    task.assigneesId?.includes(mate.id)
   )
 
-  console.log("filterAssignees", filterAssignees)
+  // console.log("filterAssignees", filterAssignees)
 
   return (
     <div

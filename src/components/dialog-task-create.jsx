@@ -62,7 +62,7 @@ export function DialogTaskCreate({ id }) {
       console.log(new_position)
     }
 
-    const assigneesId = assignees.map((assignee) => assignee.value)
+    const assigneesId = assignees?.map((assignee) => assignee.value)
 
     ctx.handlerCreateTask({
       id,

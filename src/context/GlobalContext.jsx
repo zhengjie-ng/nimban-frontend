@@ -42,6 +42,7 @@ export function GlobalProvider({ children }) {
   const [projectList, setProjectList] = useState(null)
   const [enableDrag, setEnableDrag] = useState(true)
   const [projectMates, setProjectMates] = useState([])
+  const [msgForgetPassword, setMsgForgetPassword] = useState(null)
   const navigate = useNavigate()
 
   const getCustomerData = useCallback(async () => {
@@ -273,6 +274,23 @@ export function GlobalProvider({ children }) {
       console.log(error.message)
     } finally {
       navigate("/")
+    }
+  }
+
+  const handlerResetPassword = async (props) => {
+    try {
+      const data = await apiGetCustomers(props.email)
+
+      await apiUpdateCustomer(data[0].id, {
+        ...data[0],
+        password: props.password,
+      })
+
+      setMsgForgetPassword(
+        "Password has been changed, please sign in with new password."
+      )
+    } catch (error) {
+      console.log(error.message)
     }
   }
 
@@ -686,6 +704,8 @@ export function GlobalProvider({ children }) {
     setDragTrue,
     setDragFalse,
     taskColumnData,
+    msgForgetPassword,
+    setMsgForgetPassword,
     handlerOnChangeEmailInput,
     handlerOnChangePasswordInput,
     handlerLoginSubmit,
@@ -706,6 +726,7 @@ export function GlobalProvider({ children }) {
     projectMates,
     handlerInviteProjectmate,
     handlerRemoveProjectmate,
+    handlerResetPassword,
   }
 
   return (
