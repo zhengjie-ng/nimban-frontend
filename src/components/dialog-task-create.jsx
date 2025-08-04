@@ -17,6 +17,9 @@ import { useEffect, useContext, useState } from "react"
 import { Textarea } from "./ui/textarea"
 import { ComboPriorityCreate } from "./combo-priority-create"
 import { ComboStatusCreate } from "./combo-status-create"
+import React from "react"
+import Select from "react-select"
+import makeAnimated from "react-select/animated"
 
 export function DialogTaskCreate({ id }) {
   const ctx = useContext(GlobalContext)
@@ -25,6 +28,17 @@ export function DialogTaskCreate({ id }) {
   const [priority, setPriority] = useState(null)
   const [status, setStatus] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [assignees, setAssignees] = useState(null)
+
+  const animatedComponents = makeAnimated()
+
+  const assigneeOptions = ctx.projectMates.map((projectMate) => ({
+    value: projectMate.id,
+    label: projectMate.firstName + " " + projectMate.lastName,
+    shortName: (
+      projectMate.firstName.slice(0, 1) + projectMate.lastName.slice(0, 1)
+    ).toUpperCase(),
+  }))
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -48,6 +62,8 @@ export function DialogTaskCreate({ id }) {
       console.log(new_position)
     }
 
+    const assigneesId = assignees.map((assignee) => assignee.value)
+
     ctx.handlerCreateTask({
       id,
       taskName,
@@ -59,6 +75,7 @@ export function DialogTaskCreate({ id }) {
           (taskColumn) => taskColumn.position === 0
         ).id,
       position: new_position,
+      assigneesId,
     })
     setIsOpen(false)
     setTaskName("")
@@ -107,6 +124,47 @@ export function DialogTaskCreate({ id }) {
             placeholder="Enter task description"
             onChange={(e) => setDescription(e.target.value)}
           />
+          <Label>Assignees</Label>
+          <Select
+            className="text-sm"
+            options={assigneeOptions}
+            isMulti
+            placeholder="Select assignees..."
+            closeMenuOnSelect={false}
+            onChange={setAssignees}
+            components={animatedComponents}
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                borderColor: state.isFocused
+                  ? "#a855f7"
+                  : baseStyles.borderColor, // purple-600
+                boxShadow: state.isFocused
+                  ? "0 0 0 1px #a855f7"
+                  : baseStyles.boxShadow,
+                "&:hover": {
+                  borderColor: state.isFocused
+                    ? "#a855f7"
+                    : baseStyles.borderColor,
+                },
+              }),
+            }}
+          />
+          {/* <Select
+            className="text-sm"
+            options={assigneeOptions}
+            isMulti
+            placeholder="Set Assignees"
+            closeMenuOnSelect={false}
+            // formatOptionLabel={(assignee) => (
+            //   <div className="flex items-center gap-2">
+            //     <div className="flex size-9 items-center justify-center rounded-full bg-gray-200 text-gray-800">
+            //       {assignee.shortName}
+            //     </div>
+            //     {assignee.label}
+            //   </div>
+            // )}
+          /> */}
           <div className="flex gap-2">
             <ComboPriorityCreate
               parentPriority={priority}
