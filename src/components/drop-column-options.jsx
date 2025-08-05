@@ -38,7 +38,10 @@ export function DropColumnOptions({ id, name }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange} modal={true}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="size-1 text-black/50">
+        <Button
+          variant="ghost"
+          className="size-1 text-black/50 dark:bg-gray-800 dark:text-gray-300"
+        >
           <CgMoreAlt />
         </Button>
       </DropdownMenuTrigger>

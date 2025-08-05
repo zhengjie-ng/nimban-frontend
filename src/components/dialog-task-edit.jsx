@@ -166,19 +166,100 @@ export function DialogTaskEdit(props) {
               styles={{
                 control: (baseStyles, state) => ({
                   ...baseStyles,
+                  backgroundColor: "var(--select-bg)",
                   borderColor: state.isFocused
-                    ? "#a855f7"
-                    : baseStyles.borderColor, // purple-600
+                    ? "var(--select-focus-border)"
+                    : "var(--select-border)",
                   boxShadow: state.isFocused
-                    ? "0 0 0 1px #a855f7"
+                    ? "0 0 0 1px var(--select-focus-ring)"
                     : baseStyles.boxShadow,
                   "&:hover": {
                     borderColor: state.isFocused
-                      ? "#a855f7"
-                      : baseStyles.borderColor,
+                      ? "var(--select-focus-border)"
+                      : "var(--select-hover-border)",
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "var(--select-bg)",
+                  borderColor: "var(--select-border)",
+                }),
+                option: (base, { isFocused, isSelected }) => ({
+                  ...base,
+                  backgroundColor: isSelected
+                    ? "var(--select-option-selected-bg)"
+                    : isFocused
+                      ? "var(--select-option-hover-bg)"
+                      : "var(--select-option-bg)",
+                  color: isSelected ? "white" : "var(--select-text)",
+                  "&:active": {
+                    backgroundColor: "var(--select-option-selected-bg)",
+                  },
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: "var(--select-multi-bg)",
+                }),
+                multiValueLabel: (base) => ({
+                  ...base,
+                  color: "var(--select-multi-text)",
+                }),
+                multiValueRemove: (base) => ({
+                  ...base,
+                  color: "var(--select-multi-text)",
+                  ":hover": {
+                    backgroundColor: "var(--select-multi-remove-hover)",
+                    color: "white",
+                  },
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "var(--select-text)",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "var(--select-text)",
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: "var(--select-placeholder)",
+                }),
+                indicatorSeparator: (base) => ({
+                  ...base,
+                  backgroundColor: "var(--select-separator)",
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "var(--select-indicator)",
+                  ":hover": {
+                    color: "var(--select-text)",
+                  },
+                }),
+                clearIndicator: (base) => ({
+                  ...base,
+                  color: "var(--select-indicator)",
+                  ":hover": {
+                    color: "var(--select-text)",
                   },
                 }),
               }}
+              classNamePrefix="select"
+              // styles={{
+              //   control: (baseStyles, state) => ({
+              //     ...baseStyles,
+              //     borderColor: state.isFocused
+              //       ? "#a855f7"
+              //       : baseStyles.borderColor, // purple-600
+              //     boxShadow: state.isFocused
+              //       ? "0 0 0 1px #a855f7"
+              //       : baseStyles.boxShadow,
+              //     "&:hover": {
+              //       borderColor: state.isFocused
+              //         ? "#a855f7"
+              //         : baseStyles.borderColor,
+              //     },
+              //   }),
+              // }}
             />
           </div>
           <div className="flex gap-2">

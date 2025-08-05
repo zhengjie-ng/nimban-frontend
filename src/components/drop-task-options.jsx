@@ -38,7 +38,10 @@ export function DropTaskOptions({ id, name, description, priority, status }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="size-1 text-black/50">
+        <Button
+          variant="ghost"
+          className="size-1 text-black/50 dark:bg-gray-900 dark:text-gray-300"
+        >
           <CgMoreAlt />
         </Button>
       </DropdownMenuTrigger>
