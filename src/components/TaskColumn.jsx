@@ -73,11 +73,11 @@ function TaskColumn({ taskColumn }) {
       style={style}
       {...listenersOnState}
       {...attributes}
-      className={`min-h-[60rem] w-96 rounded-3xl bg-gray-50 shadow-lg ${
+      className={`min-h-[60rem] w-96 rounded-3xl bg-gray-50 shadow-lg dark:border-2 dark:bg-slate-950 ${
         isOver ? "bg-gray-100/50" : ""
       }`}
     >
-      <div className="flex min-h-12 cursor-grab items-center justify-between rounded-3xl rounded-b-none bg-gray-200 p-4 font-medium">
+      <div className="flex min-h-12 cursor-grab items-center justify-between rounded-3xl rounded-b-none bg-gray-200 p-4 font-medium dark:bg-gray-800">
         <div className="flex">
           {taskColumn.name} ({sortedTasks.length})
         </div>

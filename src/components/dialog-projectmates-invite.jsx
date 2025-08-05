@@ -48,16 +48,8 @@ export function DialogProjectMatesInvite({ id }) {
       console.log(error.message)
     } finally {
       ctx.handlerInviteProjectmate({ id, projectMateEmail })
-      // setIsOpen(false)
       setProjectMateEmail("")
     }
-
-    // if (projectMateEmail)
-    // const formData = new FormData(e.target).get("columnName")
-    // console.log(formData)
-    // ctx.handlerCreateColumn({ id, projectMateEmail })
-    // setIsOpen(false)
-    // setProjectMateEmail("")
   }
 
   const handleOnChange = (e) => {
@@ -77,14 +69,14 @@ export function DialogProjectMatesInvite({ id }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-2xl">
+        <Button variant="outline" className="rounded-2xl dark:border-gray-600">
           <div className="flex items-center gap-2">
-            <BiPlusCircle className="text-gray-500" />
+            <BiPlusCircle className="text-gray-500 dark:text-gray-400" />
             <div className="flex gap-1">
               {ctx.projectMates?.map((projectMate) => (
                 <div
                   key={projectMate.id}
-                  className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800"
+                  className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800 dark:border-1 dark:bg-gray-800 dark:text-gray-200"
                 >
                   {(
                     projectMate.firstName.slice(0, 1) +

@@ -29,7 +29,10 @@ export function DropProjectOptions({ id }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="size-1 text-black/50">
+        <Button
+          variant="ghost"
+          className="size-1 text-black/50 dark:bg-gray-900 dark:text-gray-300"
+        >
           <CgMoreAlt />
         </Button>
       </DropdownMenuTrigger>
