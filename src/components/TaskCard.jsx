@@ -9,27 +9,27 @@ function TaskCard({ task }) {
   const ctx = useContext(GlobalContext)
   const enumStatus = {
     1: (
-      <Label className="flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-gray-200 p-1 pr-6 pl-4 dark:border-1 dark:bg-gray-800">
+      <Label className="dark:bg-secondary flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-gray-200 p-1 pr-6 pl-4 dark:border-1">
         <AiOutlineDown /> Optional
       </Label>
     ),
     2: (
-      <Label className="flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-green-200 p-1 pr-6 pl-4 dark:border-1 dark:bg-gray-800">
+      <Label className="dark:bg-secondary flex max-w-20 items-center justify-center gap-1 rounded-2xl bg-green-200 p-1 pr-6 pl-4 dark:border-1">
         <AiOutlineDown /> Low
       </Label>
     ),
     3: (
-      <Label className="flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-yellow-200 p-1 pr-6 pl-4 dark:border-1 dark:bg-gray-800">
+      <Label className="dark:bg-secondary flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-yellow-200 p-1 pr-6 pl-4 dark:border-1">
         = Medium
       </Label>
     ),
     4: (
-      <Label className="flex max-w-22 items-center justify-center gap-1 rounded-2xl bg-red-200 p-1 pr-6 pl-4 dark:border-1 dark:bg-gray-800">
+      <Label className="dark:bg-secondary flex max-w-22 items-center justify-center gap-1 rounded-2xl bg-red-200 p-1 pr-6 pl-4 dark:border-1">
         <AiOutlineUp /> High
       </Label>
     ),
     5: (
-      <Label className="flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-purple-200 p-1 pr-6 pl-4 dark:border-1 dark:bg-gray-800">
+      <Label className="dark:bg-secondary flex max-w-30 items-center justify-center gap-1 rounded-2xl bg-purple-200 p-1 pr-6 pl-4 dark:border-1">
         ! Critical
       </Label>
     ),
@@ -64,7 +64,7 @@ function TaskCard({ task }) {
       style={style}
       {...listenersOnState}
       {...attributes}
-      className="m-4 flex min-h-36 cursor-grab flex-col rounded-2xl bg-white p-4 shadow-md active:cursor-grabbing dark:border-2 dark:bg-gray-900"
+      className="dark:bg-secondary m-4 flex min-h-36 cursor-grab flex-col rounded-2xl bg-white p-4 shadow-md active:cursor-grabbing dark:border-2"
     >
       <div className="flex items-center justify-between">
         <div className="font-medium">{task.name}</div>
@@ -77,14 +77,14 @@ function TaskCard({ task }) {
           status={task.statusId}
         />
       </div>
-      <div className="max-h-30 min-h-15 overflow-y-auto text-sm whitespace-pre-line text-gray-600 dark:text-gray-400">
+      <div className="mb-2 max-h-30 min-h-15 overflow-y-auto text-sm whitespace-pre-line text-gray-600 dark:text-gray-400">
         {task.description}
       </div>
       <div className="flex gap-1">
         {filterAssignees.map((assignee) => (
           <span
             key={assignee.id}
-            className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800 dark:border-1 dark:bg-gray-800 dark:text-gray-200"
+            className="dark:bg-secondary flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] dark:border-1 dark:text-gray-200"
           >
             {(
               assignee.firstName.slice(0, 1) + assignee.lastName.slice(0, 1)

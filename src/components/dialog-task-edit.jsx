@@ -18,6 +18,7 @@ import { ComboPriorityEdit } from "./combo-priority-edit"
 import { ComboStatusEdit } from "./combo-status-edit"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
+import { twMerge } from "tw-merge"
 
 const Priorities = [
   {
@@ -244,30 +245,16 @@ export function DialogTaskEdit(props) {
                 }),
               }}
               classNamePrefix="select"
-              // styles={{
-              //   control: (baseStyles, state) => ({
-              //     ...baseStyles,
-              //     borderColor: state.isFocused
-              //       ? "#a855f7"
-              //       : baseStyles.borderColor, // purple-600
-              //     boxShadow: state.isFocused
-              //       ? "0 0 0 1px #a855f7"
-              //       : baseStyles.boxShadow,
-              //     "&:hover": {
-              //       borderColor: state.isFocused
-              //         ? "#a855f7"
-              //         : baseStyles.borderColor,
-              //     },
-              //   }),
-              // }}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex justify-items-center gap-2">
             <ComboPriorityEdit
+              className={"w-1/2"}
               parentPriority={priority}
               setParentPriority={setPriority}
             />
             <ComboStatusEdit
+              className={"w-1/2"}
               parentStatus={status}
               setParentStatus={setStatus}
             />

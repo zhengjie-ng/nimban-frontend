@@ -4,16 +4,18 @@ import GlobalContext from "@/context/GlobalContext"
 function ProjectMateCard({ props }) {
   const ctx = useContext(GlobalContext)
   return (
-    <div className="flex items-center justify-between rounded-2xl hover:bg-gray-100">
+    <div className="dark:hover:bg-background flex items-center justify-between rounded-2xl hover:bg-gray-100">
       <div className="flex items-center gap-2 p-2">
-        <div className="flex size-9 items-center justify-center rounded-full bg-gray-200 text-[0.8rem] text-gray-800">
+        <div className="dark:bg-secondary flex size-9 items-center justify-center rounded-full bg-gray-200 text-[0.8rem] text-gray-800 dark:border-1 dark:text-gray-300">
           {props.firstName.slice(0, 1) + props.lastName.slice(0, 1)}
         </div>
         <div className="flex flex-col">
           <div className="text-[0.9rem]">
             {props.firstName} {props.lastName}
           </div>
-          <div className="text-[0.7rem] text-gray-800">{props.email}</div>
+          <div className="text-[0.7rem] text-gray-800 dark:text-gray-300">
+            {props.email}
+          </div>
         </div>
       </div>
       {ctx.projectData.authorId !== props.id && (
