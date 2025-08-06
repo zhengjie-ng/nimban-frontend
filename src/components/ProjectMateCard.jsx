@@ -1,6 +1,7 @@
 import { MdOutlinePersonRemove } from "react-icons/md"
 import { useContext } from "react"
 import GlobalContext from "@/context/GlobalContext"
+import { Label } from "@/components/ui/label"
 function ProjectMateCard({ props }) {
   const ctx = useContext(GlobalContext)
   return (
@@ -18,11 +19,15 @@ function ProjectMateCard({ props }) {
           </div>
         </div>
       </div>
-      {ctx.projectData.authorId !== props.id && (
+      {ctx.projectData.authorId !== props.id ? (
         <MdOutlinePersonRemove
           onClick={() => ctx.handlerRemoveProjectmate(props.id)}
           className="mr-5 size-5 text-gray-500 hover:text-red-400"
         />
+      ) : (
+        <Label className="mr-2 text-sm text-neutral-600 italic dark:text-neutral-400">
+          Author
+        </Label>
       )}
     </div>
   )
