@@ -81,7 +81,7 @@ function TaskCard({ task }) {
         {task.description}
       </div>
       <div className="flex gap-1">
-        {filterAssignees.map((assignee) => (
+        {filterAssignees?.map((assignee) => (
           <span
             key={assignee.id}
             className="dark:bg-secondary flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] dark:border-1 dark:text-gray-200"

@@ -32,7 +32,7 @@ export function DialogTaskCreate({ id }) {
 
   const animatedComponents = makeAnimated()
 
-  const assigneeOptions = ctx.projectMates.map((projectMate) => ({
+  const assigneeOptions = ctx.projectMates?.map((projectMate) => ({
     value: projectMate.id,
     label: projectMate.firstName + " " + projectMate.lastName,
     shortName: (
