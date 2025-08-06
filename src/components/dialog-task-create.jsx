@@ -234,10 +234,12 @@ export function DialogTaskCreate({ id }) {
           />
           <div className="flex gap-2">
             <ComboPriorityCreate
+              className={"w-1/2"}
               parentPriority={priority}
               setParentPriority={setPriority}
             />
             <ComboStatusCreate
+              className={"w-1/2"}
               parentStatus={status}
               setParentStatus={setStatus}
             />

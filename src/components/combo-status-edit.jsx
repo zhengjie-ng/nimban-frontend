@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/popover"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { twMerge } from "tw-merge"
 
-export function ComboStatusEdit({ parentStatus, setParentStatus }) {
+export function ComboStatusEdit({ parentStatus, setParentStatus, className }) {
   const ctx = useContext(GlobalContext)
   const [open, setOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -29,7 +30,10 @@ export function ComboStatusEdit({ parentStatus, setParentStatus }) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className={`w-[125px] justify-start`}>
+          <Button
+            variant="outline"
+            className={twMerge(`w-[125px] justify-start ${className}`)}
+          >
             {parentStatus ? (
               <div>
                 {
@@ -54,8 +58,21 @@ export function ComboStatusEdit({ parentStatus, setParentStatus }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
-          {parentStatus ? <>{parentStatus.label}</> : <>+ Set Status</>}
+        <Button
+          variant="outline"
+          className={twMerge(`w-[125px] justify-start ${className}`)}
+        >
+          {parentStatus ? (
+            <div>
+              {
+                ctx.projectData.taskColumns.find(
+                  (taskColumn) => taskColumn.id === parentStatus
+                ).name
+              }
+            </div>
+          ) : (
+            <>+ Set Status</>
+          )}
         </Button>
       </DrawerTrigger>
       <DrawerContent>

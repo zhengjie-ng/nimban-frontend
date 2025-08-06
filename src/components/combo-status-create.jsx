@@ -19,8 +19,13 @@ import {
 } from "@/components/ui/popover"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { twMerge } from "tw-merge"
 
-export function ComboStatusCreate({ parentStatus, setParentStatus }) {
+export function ComboStatusCreate({
+  parentStatus,
+  setParentStatus,
+  className,
+}) {
   const ctx = useContext(GlobalContext)
   const [open, setOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -29,7 +34,10 @@ export function ComboStatusCreate({ parentStatus, setParentStatus }) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className={`w-[125px] justify-start`}>
+          <Button
+            variant="outline"
+            className={twMerge(`w-[125px] justify-start ${className}`)}
+          >
             {parentStatus ? (
               <div>
                 {
@@ -54,7 +62,10 @@ export function ComboStatusCreate({ parentStatus, setParentStatus }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button
+          variant="outline"
+          className={twMerge(`w-[125px] justify-start ${className}`)}
+        >
           {parentStatus ? <>{parentStatus.label}</> : <>+ Set Status</>}
         </Button>
       </DrawerTrigger>

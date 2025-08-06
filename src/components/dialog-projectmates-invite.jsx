@@ -76,7 +76,7 @@ export function DialogProjectMatesInvite({ id }) {
               {ctx.projectMates?.map((projectMate) => (
                 <div
                   key={projectMate.id}
-                  className="flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800 dark:border-1 dark:bg-gray-800 dark:text-gray-200"
+                  className="dark:bg-secondary flex size-7 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800 dark:border-1 dark:text-gray-200"
                 >
                   {(
                     projectMate.firstName.slice(0, 1) +
@@ -119,8 +119,10 @@ export function DialogProjectMatesInvite({ id }) {
             <Button type="submit">Invite</Button>
           </div>
           <div>
-            <div className="mb-2 text-gray-700">Project Mates</div>
-            <div className="flex flex-col gap-2 rounded-2xl bg-gray-50 p-2">
+            <div className="mb-2 text-gray-700 dark:text-gray-300">
+              Project Mates
+            </div>
+            <div className="dark:bg-secondary/50 flex flex-col gap-2 rounded-2xl bg-gray-50 p-2 dark:border-1">
               {ctx.projectMates?.map((projectMate) => (
                 <ProjectMateCard key={projectMate.id} props={projectMate} />
               ))}

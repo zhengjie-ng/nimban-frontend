@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/popover"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { twMerge } from "tw-merge"
 
 const Priorities = [
   {
@@ -70,7 +71,11 @@ const colorClasses = {
   },
 }
 
-export function ComboPriorityCreate({ parentPriority, setParentPriority }) {
+export function ComboPriorityCreate({
+  parentPriority,
+  setParentPriority,
+  className,
+}) {
   const [open, setOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
@@ -80,9 +85,11 @@ export function ComboPriorityCreate({ parentPriority, setParentPriority }) {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className={`${parentPriority ? colorClasses[parentPriority.color].base : ""} ${
-              parentPriority ? colorClasses[parentPriority.color].hover : ""
-            } w-[125px] justify-start`}
+            className={twMerge(
+              `${parentPriority ? colorClasses[parentPriority.color].base : ""} ${
+                parentPriority ? colorClasses[parentPriority.color].hover : ""
+              } w-[125px] justify-start ${className}`
+            )}
           >
             {parentPriority ? (
               <div>{parentPriority.label}</div>
@@ -105,7 +112,14 @@ export function ComboPriorityCreate({ parentPriority, setParentPriority }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button
+          variant="outline"
+          className={twMerge(
+            `${parentPriority ? colorClasses[parentPriority.color].base : ""} ${
+              parentPriority ? colorClasses[parentPriority.color].hover : ""
+            } w-[125px] justify-start ${className}`
+          )}
+        >
           {parentPriority ? <>{parentPriority.label}</> : <>+ Set Priority</>}
         </Button>
       </DrawerTrigger>

@@ -31,7 +31,7 @@ export function DropProjectOptions({ id }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="size-1 text-black/50 dark:bg-gray-900 dark:text-gray-300"
+          className="size-1 text-black/50 dark:bg-transparent dark:text-gray-300"
         >
           <CgMoreAlt />
         </Button>
