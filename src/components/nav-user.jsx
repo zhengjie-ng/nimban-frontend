@@ -51,7 +51,7 @@ export function NavUser({ user }) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {ctx.customerData.firstName}
+                  {ctx.customerData.firstName} {ctx.customerData.lastName}
                 </span>
                 <span className="truncate text-xs">
                   {ctx.customerData.email}
@@ -79,7 +79,7 @@ export function NavUser({ user }) {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {ctx.customerData.firstName}
+                    {ctx.customerData.firstName} {ctx.customerData.lastName}
                   </span>
                   <span className="truncate text-xs">
                     {ctx.customerData.email}
