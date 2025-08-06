@@ -44,17 +44,17 @@ export function NavUser({ user }) {
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
                   {(
-                    ctx.customerData.firstName.slice(0, 1) +
-                    ctx.customerData.lastName.slice(0, 1)
+                    ctx.customerData?.firstName.slice(0, 1) +
+                    ctx.customerData?.lastName.slice(0, 1)
                   ).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {ctx.customerData.firstName} {ctx.customerData.lastName}
+                  {ctx.customerData?.firstName} {ctx.customerData?.lastName}
                 </span>
                 <span className="truncate text-xs">
-                  {ctx.customerData.email}
+                  {ctx.customerData?.email}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -72,17 +72,17 @@ export function NavUser({ user }) {
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
                     {(
-                      ctx.customerData.firstName.slice(0, 1) +
-                      ctx.customerData.lastName.slice(0, 1)
+                      ctx.customerData?.firstName.slice(0, 1) +
+                      ctx.customerData?.lastName.slice(0, 1)
                     ).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {ctx.customerData.firstName} {ctx.customerData.lastName}
+                    {ctx.customerData?.firstName} {ctx.customerData?.lastName}
                   </span>
                   <span className="truncate text-xs">
-                    {ctx.customerData.email}
+                    {ctx.customerData?.email}
                   </span>
                 </div>
               </div>

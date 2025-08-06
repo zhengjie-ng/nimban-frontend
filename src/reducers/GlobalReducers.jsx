@@ -4,7 +4,7 @@ export const defaultProduct = {
   loginErrorMsg: "",
   isAuthenticated: false,
   customerId: null,
-  projectid: null,
+  // projectid: null,
   activeProject: null,
 }
 
@@ -38,8 +38,8 @@ export function globalReducer(state, action) {
         activeProject: null,
       }
 
-    case "SELECT_PROJECT":
-      return { ...state, projectId: action.value }
+    // case "SELECT_PROJECT":
+    //   return { ...state, projectId: action.value }
 
     default:
       throw Error("globalReducer - unknown action:", action.type)

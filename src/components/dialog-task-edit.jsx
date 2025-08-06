@@ -18,7 +18,6 @@ import { ComboPriorityEdit } from "./combo-priority-edit"
 import { ComboStatusEdit } from "./combo-status-edit"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
-import { twMerge } from "tw-merge"
 
 const Priorities = [
   {
@@ -244,7 +243,7 @@ export function DialogTaskEdit(props) {
                   },
                 }),
               }}
-              classNamePrefix="select"
+              // classNamePrefix="select"
             />
           </div>
           <div className="flex justify-items-center gap-2">

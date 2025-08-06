@@ -64,17 +64,6 @@ function HomePage() {
               <DialogTaskCreate id={ctx.projectData?.id} />
               <DialogColumnCreate id={ctx.projectData?.id} />
               <DialogProjectMatesInvite id={ctx.projectData?.id} />
-              {/* <div className="flex items-center gap-2 rounded-2xl border-1 p-1">
-                <BiPlusCircle className="text-gray-500" />
-                <div className="flex gap-1">
-                  {ctx.projectMates.map((projectMate) => (
-                    <div className="flex size-8 items-center justify-center rounded-full bg-gray-200 text-[0.7rem] text-gray-800">
-                      {projectMate.firstName.slice(0, 1) +
-                        projectMate.lastName.slice(0, 1)}
-                    </div>
-                  ))}
-                </div>
-              </div> */}
             </div>
             <div className="justify-left mt-4 ml-4 flex gap-8">
               {/* {ctx.enableDrag ? ( */}
@@ -88,13 +77,6 @@ function HomePage() {
                   <TaskColumn key={taskColumn.id} taskColumn={taskColumn} />
                 ))}
               </DndContext>
-              {/* ) : (
-                <>
-                  {sortedColumns.map((taskColumn) => (
-                    <TaskColumn key={taskColumn.id} taskColumn={taskColumn} />
-                  ))}
-                </>
-              )} */}
             </div>
           </div>
         ) : (

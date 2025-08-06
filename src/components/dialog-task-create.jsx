@@ -213,7 +213,7 @@ export function DialogTaskCreate({ id }) {
                 },
               }),
             }}
-            classNamePrefix="select"
+            // classNamePrefix="select"
 
             // styles={{
             //   control: (baseStyles, state) => ({

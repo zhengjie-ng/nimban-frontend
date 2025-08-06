@@ -43,6 +43,7 @@ export function GlobalProvider({ children }) {
   const [enableDrag, setEnableDrag] = useState(true)
   const [projectMates, setProjectMates] = useState([])
   const [msgForgetPassword, setMsgForgetPassword] = useState(null)
+  const [projectId, setProjectId] = useState(null)
   const navigate = useNavigate()
 
   const getCustomerData = useCallback(async () => {
@@ -265,7 +266,8 @@ export function GlobalProvider({ children }) {
       setUpdateProject(true)
       setUpdateTaskColumnData(true)
     }
-    dispatch({ type: "SELECT_PROJECT", value })
+    setProjectId(value)
+    // dispatch({ type: "SELECT_PROJECT", value })
   }
   const handlerCreateCustomer = async (props) => {
     try {
@@ -331,18 +333,31 @@ export function GlobalProvider({ children }) {
 
   const handlerDeleteProject = async (id) => {
     try {
-      await apiUpdateCustomer(state.customerId, {
-        ...customerData,
-        projectsId: customerData.projectsId.filter(
-          (projectId) => projectId !== id
-        ),
-      })
+      const project = await apiGetProject(id)
+      await Promise.all(
+        project.teammatesId.map(async (mateId) => {
+          const mate = await apiGetCustomer(mateId)
+          await apiUpdateCustomer(mateId, {
+            ...mate,
+            projectsId: mate.projectsId.filter((projectId) => projectId !== id),
+          })
+        })
+      )
+
+      // Delete the project itself
       await apiDeleteProject(id)
+
+      // If the deleted project was the currently selected one, clear it
+      if (customerData?.lastAccessedId === id) {
+        await apiUpdateCustomer(state.customerId, {
+          ...customerData,
+          lastAccessedId: null,
+        })
+      }
     } catch (error) {
       console.log(error.message)
     } finally {
       setUpdateCustomer(true)
-      // setUpdateProjectList(true)
       setProjectData(null)
     }
   }
@@ -518,6 +533,8 @@ export function GlobalProvider({ children }) {
       await apiUpdateCustomer(mate.id, {
         ...mate,
         projectsId: updatedMateProjects,
+        lastAccessedId:
+          mate.lastAccessedId === projectId ? null : mate.lastAccessedId,
       })
 
       // 3. Remove mate from project's teammatesId array
@@ -528,9 +545,21 @@ export function GlobalProvider({ children }) {
         teammatesId: updatedProjectTeammates,
       })
 
+      // Special case: if the removed mate is the current user
+      if (projectmateId === state.customerId) {
+        await apiUpdateCustomer(state.customerId, {
+          ...customerData,
+          lastAccessedId: null,
+          projectsId:
+            customerData.projectsId?.filter((id) => id !== projectId) || [],
+        })
+        setProjectId(null)
+        setProjectData(null)
+      }
+
       // Refresh data
       setUpdateCustomer(true)
-      setUpdateProject(true)
+      // setUpdateProject(true)
 
       return true // Indicate success
     } catch (error) {
@@ -696,7 +725,7 @@ export function GlobalProvider({ children }) {
     isAuthenticated: state.isAuthenticated,
     customerId: state.customerId,
     activeProject: state.activeProject,
-    projectId: state.projectId,
+    projectId,
     customerData,
     projectData,
     projectList,
