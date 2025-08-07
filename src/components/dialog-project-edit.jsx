@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import GlobalContext from "../context/GlobalContext"
 import { useContext, useEffect, useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function DialogProjectEdit({ id, setIsDropdownOpen }) {
   const ctx = useContext(GlobalContext)
@@ -20,6 +21,7 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
     ctx.projectList.find((project) => project.id === id).name
   )
   const [isOpen, setIsOpen] = useState(false)
+  const [hideProject, setHideProject] = useState(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -70,6 +72,10 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
                 maxLength={30}
               />
             </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Checkbox />
+            <Label htmlFor="terms">Hide Project</Label>
           </div>
           <DialogFooter>
             <DialogClose asChild>
