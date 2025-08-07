@@ -70,10 +70,10 @@ function TaskColumn({ taskColumn }) {
   return (
     <div
       ref={combinedRef}
-      style={style}
+      style={{ ...style, touchAction: "none" }}
       {...listenersOnState}
       {...attributes}
-      className={`dark:bg-secondary/40 min-h-[60rem] w-96 rounded-3xl bg-gray-50 shadow-lg dark:border-2 ${
+      className={`dark:bg-secondary/40 min-h-[60rem] min-w-50 rounded-3xl bg-gray-50 shadow-lg md:min-w-96 dark:border-2 ${
         isOver ? "bg-gray-100/50" : ""
       }`}
     >
