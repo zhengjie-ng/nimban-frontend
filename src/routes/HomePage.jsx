@@ -12,7 +12,9 @@ import { Button } from "@/components/ui/button"
 import TaskColumn from "@/components/TaskColumn"
 import {
   DndContext,
+  KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -26,10 +28,25 @@ import { DialogProjectMatesInvite } from "@/components/dialog-projectmates-invit
 function HomePage() {
   const ctx = useContext(GlobalContext)
 
+  // const sensors = useSensors(
+  //   useSensor(TouchSensor),
+  //   useSensor(PointerSensor, {
+  //     activationConstraint: {
+  //       distance: 3,
+  //     },
+  //   }),
+  //   useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  // )
   const sensors = useSensors(
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 8,
       },
     })
   )
