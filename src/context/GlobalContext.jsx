@@ -255,8 +255,10 @@ export function GlobalProvider({ children }) {
 
   const handlerSelectProject = async (value) => {
     try {
+      const data = await apiGetCustomer(state.customerId)
+
       await apiUpdateCustomer(state.customerId, {
-        ...customerData,
+        ...data,
         lastAccessedId: value,
       })
     } catch (error) {

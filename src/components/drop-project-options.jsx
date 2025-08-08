@@ -8,9 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import GlobalContext from "../context/GlobalContext"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { DialogProjectEdit } from "./dialog-project-edit"
 import Modal from "react-modal"
+import { apiGetProject } from "@/api/projectAPI"
 
 Modal.setAppElement("#root")
 
@@ -18,6 +19,16 @@ export function DropProjectOptions({ id }) {
   const ctx = useContext(GlobalContext)
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [project, setProject] = useState(null)
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      const projectData = await apiGetProject(id)
+      setProject(projectData)
+    }
+
+    fetchProject()
+  }, [id])
 
   const handleSelect = () => {
     ctx.handlerSelectProject(id)
@@ -51,7 +62,7 @@ export function DropProjectOptions({ id }) {
             <DialogProjectEdit id={id} setIsDropdownOpen={setIsOpen} />
             <DropdownMenuItem
               onClick={
-                ctx.customerId === id
+                ctx.customerId === project?.authorId
                   ? handleDelete
                   : handleUnauthorizedDeleteClick
               }
