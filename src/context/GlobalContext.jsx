@@ -364,9 +364,13 @@ export function GlobalProvider({ children }) {
     }
   }
 
-  const handlerEditProject = async ({ id, projectName }) => {
+  const handlerEditProject = async ({ id, projectName, hideProject }) => {
     try {
-      await apiPatchProject(id, { ...projectData, name: projectName })
+      await apiPatchProject(id, {
+        ...projectData,
+        name: projectName,
+        hidden: hideProject,
+      })
     } catch (error) {
       console.log(error.message)
     } finally {

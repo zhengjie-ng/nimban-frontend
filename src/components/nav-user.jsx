@@ -27,7 +27,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+
 export function NavUser({ user = {} }) {
+
   const { isMobile } = useSidebar()
   const ctx = useContext(GlobalContext)
 
@@ -44,6 +46,7 @@ export function NavUser({ user = {} }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
+
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.avatar} alt={user?.name} />
                 {ctx.customerData && (
@@ -55,6 +58,7 @@ export function NavUser({ user = {} }) {
                   </AvatarFallback>
                 )}
               </Avatar>
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {ctx.customerData?.firstName} {ctx.customerData?.lastName}
@@ -75,6 +79,7 @@ export function NavUser({ user = {} }) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
+
                   <AvatarImage src={user.avatar} alt={user.name} />
                   {ctx.customerData && (
                     <AvatarFallback className="rounded-lg">

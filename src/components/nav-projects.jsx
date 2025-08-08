@@ -22,7 +22,7 @@ import { Button } from "./ui/button"
 import { DialogProjectCreate } from "./dialog-project-create"
 import { DropProjectOptions } from "./drop-project-options"
 
-export function NavProjects() {
+export function NavProjects({ showHidden }) {
   const ctx = useContext(GlobalContext)
 
   const sortedProjects = ctx.projectList?.sort((a, b) => a.id - b.id)
@@ -30,12 +30,7 @@ export function NavProjects() {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {/* {open ? <Button>Create Project</Button> : ""} */}
         <DialogProjectCreate />
-        {/* <Button onClick={() => ctx.handlerCreateProject("Proj_Test")}>
-          Create Project
-        </Button> */}
-
         <Collapsible asChild className="group/collapsible" defaultOpen={true}>
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -49,16 +44,37 @@ export function NavProjects() {
               <SidebarMenuSub>
                 {sortedProjects?.map((project) => (
                   <SidebarMenuSubItem key={project?.id}>
-                    <div className="flex items-center justify-between">
-                      <SidebarMenuSubButton asChild>
-                        <span
-                          onClick={() => ctx.handlerSelectProject(project.id)}
-                        >
-                          {project?.name}
-                        </span>
-                      </SidebarMenuSubButton>
-                      <DropProjectOptions id={project?.id} />
-                    </div>
+                    {project.hidden === false && (
+                      <div className="flex items-center justify-between">
+                        <SidebarMenuSubButton asChild>
+                          <span
+                            onClick={() => ctx.handlerSelectProject(project.id)}
+                          >
+                            {project?.name}
+                          </span>
+                        </SidebarMenuSubButton>
+                        <DropProjectOptions id={project?.id} />
+                      </div>
+                    )}
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+              <SidebarMenuSub>
+                {sortedProjects?.map((project) => (
+                  <SidebarMenuSubItem key={project?.id}>
+                    {project.hidden === true && showHidden === true && (
+                      <div className="flex items-center justify-between">
+                        <SidebarMenuSubButton asChild>
+                          <span
+                            className="italic opacity-70"
+                            onClick={() => ctx.handlerSelectProject(project.id)}
+                          >
+                            {project?.name}
+                          </span>
+                        </SidebarMenuSubButton>
+                        <DropProjectOptions id={project?.id} />
+                      </div>
+                    )}
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>
