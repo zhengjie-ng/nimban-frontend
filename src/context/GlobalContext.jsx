@@ -244,12 +244,12 @@ export function GlobalProvider({ children }) {
   }
 
   const handlerLogout = () => {
-    navigate("/")
     setProjectData(null)
     setCustomerData(null)
     setProjectList(null)
     setProjectMates(null)
     setTaskColumnData(null)
+    navigate("/")
     dispatch({ type: "LOGOUT" })
   }
 
@@ -613,6 +613,7 @@ export function GlobalProvider({ children }) {
           console.error("Failed to update task:", error)
           setProjectData(projectData)
         } finally {
+          setUpdateCustomer(true)
           setUpdateProject(true)
         }
       }
