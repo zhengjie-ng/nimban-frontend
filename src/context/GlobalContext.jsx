@@ -244,19 +244,21 @@ export function GlobalProvider({ children }) {
   }
 
   const handlerLogout = () => {
-    navigate("/")
     setProjectData(null)
     setCustomerData(null)
     setProjectList(null)
     setProjectMates(null)
     setTaskColumnData(null)
+    navigate("/")
     dispatch({ type: "LOGOUT" })
   }
 
   const handlerSelectProject = async (value) => {
     try {
+      const data = await apiGetCustomer(state.customerId)
+
       await apiUpdateCustomer(state.customerId, {
-        ...customerData,
+        ...data,
         lastAccessedId: value,
       })
     } catch (error) {
@@ -615,6 +617,7 @@ export function GlobalProvider({ children }) {
           console.error("Failed to update task:", error)
           setProjectData(projectData)
         } finally {
+          setUpdateCustomer(true)
           setUpdateProject(true)
         }
       }
@@ -708,6 +711,7 @@ export function GlobalProvider({ children }) {
       }
       setProjectData(updatedProjectData)
       setUpdateTaskColumnData(true)
+      setUpdateCustomer(true)
 
       try {
         await Promise.all(
