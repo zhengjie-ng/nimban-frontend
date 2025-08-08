@@ -707,6 +707,7 @@ export function GlobalProvider({ children }) {
       }
       setProjectData(updatedProjectData)
       setUpdateTaskColumnData(true)
+      setUpdateCustomer(true)
 
       try {
         await Promise.all(
