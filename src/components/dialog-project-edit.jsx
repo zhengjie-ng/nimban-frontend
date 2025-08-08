@@ -21,7 +21,9 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
     ctx.projectList.find((project) => project.id === id).name
   )
   const [isOpen, setIsOpen] = useState(false)
-  const [hideProject, setHideProject] = useState(null)
+  const [hideProject, setHideProject] = useState(
+    ctx.projectList.find((project) => project.id === id).hidden
+  )
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -31,7 +33,7 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
     }
 
     e.preventDefault()
-    ctx.handlerEditProject({ id, projectName })
+    ctx.handlerEditProject({ id, projectName, hideProject })
     setIsOpen(false)
     setProjectName("")
     setIsDropdownOpen(false)
@@ -73,8 +75,14 @@ export function DialogProjectEdit({ id, setIsDropdownOpen }) {
               />
             </div>
           </div>
+          {/* {hideProject === true ? "true" : "false"} */}
+
           <div className="flex justify-end gap-3">
-            <Checkbox />
+            <Checkbox
+              id="hide-project"
+              checked={hideProject}
+              onCheckedChange={(checked) => setHideProject(checked)}
+            />
             <Label htmlFor="terms">Hide Project</Label>
           </div>
           <DialogFooter>

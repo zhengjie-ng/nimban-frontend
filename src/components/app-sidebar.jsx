@@ -25,19 +25,24 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Separator } from "./ui/separator"
+import { useState } from "react"
 
 export function AppSidebar({ ...props }) {
+  const [showHidden, setShowHidden] = useState(false)
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <NavHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects />
+        <NavProjects showHidden={showHidden} />
       </SidebarContent>
       <SidebarFooter>
         <div className="mb-2 ml-2 flex gap-3">
-          <Checkbox />
+          <Checkbox
+            checked={showHidden}
+            onCheckedChange={(checked) => setShowHidden(checked)}
+          />
           <Label htmlFor="terms">Show Hidden</Label>
         </div>
         <Separator />
