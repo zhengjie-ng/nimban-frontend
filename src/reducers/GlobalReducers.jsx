@@ -1,6 +1,6 @@
 export const defaultProduct = {
-  loginEmailInput: "alan@nimban.com",
-  loginPasswordInput: "Alan@1234",
+  loginEmailInput: "",
+  loginPasswordInput: "",
   loginErrorMsg: "",
   isAuthenticated: false,
   customerId: null,

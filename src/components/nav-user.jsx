@@ -1,5 +1,6 @@
 import GlobalContext from "@/context/GlobalContext"
 import { useContext } from "react"
+import { useNavigate, Link } from "react-router-dom"
 
 import {
   BadgeCheck,
@@ -8,6 +9,7 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -32,6 +34,10 @@ export function NavUser({ user = {} }) {
 
   const { isMobile } = useSidebar()
   const ctx = useContext(GlobalContext)
+  const navigate = useNavigate()
+  const isAdmin = localStorage.getItem("isAdmin") === "true"
+
+  console.log("NavUser - isAdmin:", isAdmin, "localStorage:", localStorage.getItem("isAdmin"))
 
   if (!ctx) {
     return null
@@ -101,6 +107,20 @@ export function NavUser({ user = {} }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {isAdmin && (
+              <>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    window.location.href = "/admin"
+                  }}
+                >
+                  <ShieldCheck />
+                  Admin Panel
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
+            {!isAdmin && <div style={{display: 'none'}}>Not admin</div>}
             <DropdownMenuItem>
               <LogOut />
               <div onClick={ctx.handlerLogout}>Log out</div>

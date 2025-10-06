@@ -12,6 +12,7 @@ import {
   apiCreateCustomer,
   apiUpdateCustomer,
 } from "@/api/customerAPI"
+import { apiLogin, apiLogout, apiGetUserInfo } from "@/api/authAPI"
 
 import { useNavigate } from "react-router-dom"
 import {
@@ -36,7 +37,10 @@ export function GlobalProvider({ children }) {
   const [updateProject, setUpdateProject] = useState(false)
   const [updateProjectList, setUpdateProjectList] = useState(null)
   const [updateTaskColumnData, setUpdateTaskColumnData] = useState(null)
-  const [customerData, setCustomerData] = useState(null)
+  const [customerData, setCustomerData] = useState(() => {
+    const saved = localStorage.getItem("customerData")
+    return saved ? JSON.parse(saved) : null
+  })
   const [projectData, setProjectData] = useState(null)
   const [taskColumnData, setTaskColumnData] = useState(null)
   const [projectList, setProjectList] = useState(null)
@@ -45,6 +49,13 @@ export function GlobalProvider({ children }) {
   const [msgForgetPassword, setMsgForgetPassword] = useState(null)
   const [projectId, setProjectId] = useState(null)
   const navigate = useNavigate()
+
+  // Persist customerData to localStorage
+  useEffect(() => {
+    if (customerData) {
+      localStorage.setItem("customerData", JSON.stringify(customerData))
+    }
+  }, [customerData])
 
   const getCustomerData = useCallback(async () => {
     console.log("Get customer data")
@@ -215,42 +226,66 @@ export function GlobalProvider({ children }) {
     console.log("Logging in")
 
     try {
-      const customers = await apiGetCustomers(state.loginEmailInput)
-      let foundCustomer = null
+      // Call JWT login endpoint with lowercase email
+      const loginResponse = await apiLogin(
+        state.loginEmailInput.toLowerCase(),
+        state.loginPasswordInput
+      )
 
+      // Store JWT token in localStorage
+      localStorage.setItem("jwtToken", loginResponse.jwtToken)
+      localStorage.setItem("userEmail", loginResponse.email)
+
+      // Store user roles
+      const isAdmin = loginResponse.roles?.includes("ROLE_ADMIN")
+      localStorage.setItem("userRoles", JSON.stringify(loginResponse.roles))
+      localStorage.setItem("isAdmin", isAdmin ? "true" : "false")
+
+      // Get user info from backend
+      const userInfo = await apiGetUserInfo()
+
+      // Find customer by email to get full customer data
+      const customers = await apiGetCustomers(loginResponse.email)
       if (customers.length > 0) {
-        const customer = customers[0]
-        if (customer.password === state.loginPasswordInput) {
-          const customerDataRetrieved = await apiGetCustomer(customer.id)
-          foundCustomer = customerDataRetrieved
-        } else {
-          dispatch({ type: "LOGIN_FAILURE", error: "Incorrect Password" })
-          return
-        }
-      }
-
-      if (foundCustomer) {
+        const foundCustomer = customers[0]
         dispatch({ type: "LOGIN_SUCCESS", customer: foundCustomer })
       } else {
-        dispatch({ type: "LOGIN_FAILURE", error: "Email Not Registered" })
+        dispatch({ type: "LOGIN_FAILURE", error: "User data not found" })
       }
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Login failed. Please try again."
       dispatch({
         type: "LOGIN_FAILURE",
-        error: "Login failed. Please try again.",
+        error: errorMessage,
       })
       console.error(error)
     }
   }
 
-  const handlerLogout = () => {
-    setProjectData(null)
-    setCustomerData(null)
-    setProjectList(null)
-    setProjectMates(null)
-    setTaskColumnData(null)
-    navigate("/")
-    dispatch({ type: "LOGOUT" })
+  const handlerLogout = async () => {
+    try {
+      // Call backend logout endpoint
+      await apiLogout()
+    } catch (error) {
+      console.error("Logout error:", error)
+    } finally {
+      // Clear JWT token from localStorage
+      localStorage.removeItem("jwtToken")
+      localStorage.removeItem("userEmail")
+      localStorage.removeItem("userRoles")
+      localStorage.removeItem("isAdmin")
+      localStorage.removeItem("customerData")
+
+      // Clear state
+      setProjectData(null)
+      setCustomerData(null)
+      setProjectList(null)
+      setProjectMates(null)
+      setTaskColumnData(null)
+      navigate("/")
+      dispatch({ type: "LOGOUT" })
+    }
   }
 
   const handlerSelectProject = async (value) => {
