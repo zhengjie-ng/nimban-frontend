@@ -1,6 +1,6 @@
 import GlobalContext from "@/context/GlobalContext"
 import { useContext } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import {
   BadgeCheck,
@@ -29,15 +29,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-
 export function NavUser({ user = {} }) {
-
   const { isMobile } = useSidebar()
   const ctx = useContext(GlobalContext)
-  const navigate = useNavigate()
   const isAdmin = localStorage.getItem("isAdmin") === "true"
 
-  console.log("NavUser - isAdmin:", isAdmin, "localStorage:", localStorage.getItem("isAdmin"))
+  console.log(
+    "NavUser - isAdmin:",
+    isAdmin,
+    "localStorage:",
+    localStorage.getItem("isAdmin")
+  )
 
   if (!ctx) {
     return null
@@ -52,7 +54,6 @@ export function NavUser({ user = {} }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.avatar} alt={user?.name} />
                 {ctx.customerData && (
@@ -85,7 +86,6 @@ export function NavUser({ user = {} }) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-
                   <AvatarImage src={user.avatar} alt={user.name} />
                   {ctx.customerData && (
                     <AvatarFallback className="rounded-lg">
@@ -120,7 +120,7 @@ export function NavUser({ user = {} }) {
                 <DropdownMenuSeparator />
               </>
             )}
-            {!isAdmin && <div style={{display: 'none'}}>Not admin</div>}
+            {!isAdmin && <div style={{ display: "none" }}>Not admin</div>}
             <DropdownMenuItem>
               <LogOut />
               <div onClick={ctx.handlerLogout}>Log out</div>
