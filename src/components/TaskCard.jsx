@@ -1,5 +1,4 @@
 import { AiOutlineUp, AiOutlineDown } from "react-icons/ai"
-import { useDraggable } from "@dnd-kit/core"
 import { Label } from "@radix-ui/react-dropdown-menu"
 import { DropTaskOptions } from "./drop-task-options"
 import { useContext } from "react"
@@ -53,37 +52,13 @@ function TaskCard({ task }) {
       </Label>
     ),
   }
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: `task-${task.id}`,
-    data: {
-      type: "task",
-      task,
-    },
-  })
-
-  const listenersOnState = ctx.enableDrag ? { ...listeners } : undefined
-
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        zIndex: 10,
-        opacity: 0.8,
-      }
-    : undefined
 
   const filterAssignees = ctx.projectMates?.filter((mate) =>
     task.assigneesId?.includes(mate.id)
   )
 
-  // console.log("filterAssignees", filterAssignees)
-
   return (
-    <div
-      ref={setNodeRef}
-      style={{ ...style, touchAction: "none" }}
-      {...listenersOnState}
-      {...attributes}
-      className="dark:bg-secondary m-4 flex min-h-36 cursor-grab flex-col rounded-2xl bg-white p-4 shadow-md active:cursor-grabbing dark:border-2"
+    <div className="flex min-h-36 flex-col gap-2"
     >
       <div className="flex items-center justify-between">
         <div className="font-medium">{task.name}</div>

@@ -41,6 +41,9 @@ export function DropTaskOptions({ id, name, description, priority, status }) {
         <Button
           variant="ghost"
           className="size-1 text-black/50 dark:bg-transparent dark:text-gray-300"
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
         >
           <CgMoreAlt />
         </Button>
