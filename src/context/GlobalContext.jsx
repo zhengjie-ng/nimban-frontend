@@ -58,7 +58,6 @@ export function GlobalProvider({ children }) {
   }, [customerData])
 
   const getCustomerData = useCallback(async () => {
-    console.log("Get customer data")
     setIsLoading(true)
     try {
       const data = await apiGetCustomer(state.customerId)
@@ -72,13 +71,17 @@ export function GlobalProvider({ children }) {
   }, [state.customerId])
 
   const getProjectList = useCallback(async () => {
-    console.log("Get project list")
     // if (!customerData?.projectsId) return
     try {
-      const projects = await Promise.all(
-        customerData.projectsId.map((projectId) => apiGetProject(projectId))
+      const projectPromises = customerData.projectsId.map((projectId) =>
+        apiGetProject(projectId).catch((error) => {
+          console.error(`Failed to fetch project ${projectId}:`, error.message)
+          return null // Return null for failed fetches
+        })
       )
-      setProjectList(projects)
+      const projects = await Promise.all(projectPromises)
+      // Filter out null values (failed fetches)
+      setProjectList(projects.filter((project) => project !== null))
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -87,12 +90,18 @@ export function GlobalProvider({ children }) {
   }, [customerData])
 
   const getProjectData = useCallback(async () => {
-    console.log("Get project data")
+    if (!customerData?.lastAccessedId) {
+      setProjectData(null)
+      setUpdateProject(false)
+      return
+    }
+
     try {
-      const data = await apiGetProject(customerData?.lastAccessedId)
+      const data = await apiGetProject(customerData.lastAccessedId)
       setProjectData(data)
     } catch (error) {
-      console.log(error.message)
+      console.error(`Failed to fetch project ${customerData.lastAccessedId}:`, error.message)
+      setProjectData(null)
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
@@ -101,14 +110,18 @@ export function GlobalProvider({ children }) {
   }, [customerData?.lastAccessedId])
 
   const getProjectDataOnLogin = useCallback(async () => {
-    console.log("Get project data on login")
+    if (!customerData?.lastAccessedId) {
+      setProjectData(null)
+      setUpdateProject(false)
+      return
+    }
+
     try {
-      if (customerData?.lastAccessedId) {
-        const data = await apiGetProject(customerData?.lastAccessedId)
-        setProjectData(data)
-      }
+      const data = await apiGetProject(customerData.lastAccessedId)
+      setProjectData(data)
     } catch (error) {
-      console.log(error.message)
+      console.error(`Failed to fetch project ${customerData.lastAccessedId}:`, error.message)
+      setProjectData(null)
     } finally {
       setUpdateProject(false)
       setUpdateTaskColumnData(true)
@@ -135,14 +148,15 @@ export function GlobalProvider({ children }) {
   }, [projectData?.teammatesId])
 
   const getTaskColumnData = () => {
-    console.log("update task column")
     const columnsData = projectData?.taskColumns
     const tasksData = projectData?.tasks
     // setTaskColumnData(data)
 
     const newData = columnsData?.map((col) => ({
       ...col,
-      tasks: tasksData.filter((task) => task.statusId === col.id),
+      tasks: tasksData
+        .filter((task) => task.statusId === col.id)
+        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0)), // Sort by position
     }))
     if (newData) {
       setTaskColumnData(newData)
@@ -223,7 +237,6 @@ export function GlobalProvider({ children }) {
 
   const handlerLoginSubmit = async (e) => {
     e.preventDefault()
-    console.log("Logging in")
 
     try {
       // Call JWT login endpoint with lowercase email
@@ -612,21 +625,40 @@ export function GlobalProvider({ children }) {
   const handlerTaskDragEnd = async (event) => {
     const { active, over } = event
 
-    if (!over || active.id === over.id) return
+    if (!over || !active) return
+
+    const activeIdStr = active.id ? String(active.id) : ""
+
+    // Check if this is a task drag (Kanban component uses numeric IDs directly)
+    const isTaskDrag = typeof active.id === "number" || !activeIdStr.startsWith("column-")
 
     // drag task
-    if (active.id.startsWith("task-")) {
-      const taskId = active.id.replace("task-", "")
+    if (isTaskDrag && !activeIdStr.startsWith("column-")) {
+      const taskId = typeof active.id === "number" ? active.id : parseInt(String(active.id).replace("task-", ""))
       const activeTask = projectData.tasks.find(
-        (task) => task.id === parseInt(taskId)
+        (task) => task.id === taskId
       )
 
+      if (!activeTask) return
+
+      // Determine if we're moving to a column or to another task
+      // Check column first to handle ID collisions between tasks and columns
+      const overIdStr = String(over.id)
+      const isOverColumnStr = overIdStr.startsWith('column-')
+      const columnIdFromStr = isOverColumnStr ? parseInt(overIdStr.replace('column-', '')) : null
+      const isOverColumn = isOverColumnStr || (typeof over.id === "number" && projectData.taskColumns?.some(col => col.id === over.id))
+      const overTask = !isOverColumn ? projectData.tasks.find(t => t.id === over.id) : null
+      const targetColumnId = isOverColumnStr ? columnIdFromStr : (isOverColumn ? over.id : (overTask?.statusId || activeTask.statusId))
+
+      // Early return only if dragging task onto itself (not onto a column with same ID)
+      if (!isOverColumn && active.id === over.id) return
+
       // If moving between columns
-      if (active.data.current?.statusId !== over.id) {
+      if (activeTask.statusId !== targetColumnId && targetColumnId) {
         try {
           // Get all tasks in the target column to calculate new position
           const targetColumnTasks = projectData.tasks
-            .filter((task) => task.statusId === over.id)
+            .filter((task) => task.statusId === targetColumnId)
             .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
 
           const newPosition =
@@ -637,14 +669,14 @@ export function GlobalProvider({ children }) {
           const updatedProjectData = {
             ...projectData,
             tasks: projectData.tasks.map((task) =>
-              task.id === parseInt(taskId)
-                ? { ...task, statusId: over.id, position: newPosition }
+              task.id === taskId
+                ? { ...task, statusId: targetColumnId, position: newPosition }
                 : task
             ),
           }
           setProjectData(updatedProjectData)
-          await apiPatchTask(parseInt(taskId), {
-            statusId: over.id,
+          await apiPatchTask(taskId, {
+            statusId: targetColumnId,
             position: newPosition,
             sortedTimeStamp: new Date(),
           })
@@ -656,57 +688,60 @@ export function GlobalProvider({ children }) {
           setUpdateProject(true)
         }
       }
-      // If moving within the same column
-      else {
+      // If moving within the same column (reordering)
+      else if (!isOverColumn && overTask && over.id !== active.id) {
         try {
           // Get all tasks in the current column, sorted by position
           const columnTasks = projectData.tasks
-            .filter((task) => task.statusId === over.id)
+            .filter((task) => task.statusId === targetColumnId)
             .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
 
-          // Remove the active task from the array temporarily
-          const filteredTasks = columnTasks.filter(
-            (task) => task.id !== parseInt(taskId)
-          )
+          // Remove the active task from the array
+          const otherTasks = columnTasks.filter(task => task.id !== taskId)
 
-          // Find the index where the task should be inserted
-          const overIndex = filteredTasks.findIndex(
-            (task) => `task-${task.id}` === over.id
-          )
+          // Find where to insert the dragged task
+          const overTaskId = typeof over.id === "number" ? over.id : parseInt(String(over.id).replace("task-", ""))
+          const insertIndex = otherTasks.findIndex(task => task.id === overTaskId)
 
-          // Calculate new position
-          let newPosition
-          if (overIndex === -1) {
-            // Dropped at the end
-            newPosition =
-              filteredTasks.length > 0
-                ? filteredTasks[filteredTasks.length - 1].position + 1
-                : 0
-          } else if (overIndex === 0) {
-            // Dropped at the beginning
-            newPosition = filteredTasks[0].position - 1
+          // Create new ordered array
+          const activeTaskObj = columnTasks.find(t => t.id === taskId)
+          const newOrderedTasks = [...otherTasks]
+
+          // Insert the active task at the correct position
+          if (insertIndex === -1) {
+            // Add to end
+            newOrderedTasks.push(activeTaskObj)
           } else {
-            // Dropped between two tasks
-            const prevTask = filteredTasks[overIndex - 1]
-            const nextTask = filteredTasks[overIndex]
-            newPosition = (prevTask.position + nextTask.position) / 2
+            // Insert before the over task
+            newOrderedTasks.splice(insertIndex, 0, activeTaskObj)
           }
 
-          // Update the task's position
+          // Renumber all tasks with clean positions (0, 1000, 2000, 3000, etc.)
+          const tasksToUpdate = newOrderedTasks.map((task, index) => ({
+            id: task.id,
+            position: index * 1000
+          }))
+
+          // Update all tasks in the backend
+          await Promise.all(
+            tasksToUpdate.map(({ id, position }) =>
+              apiPatchTask(id, {
+                position,
+                sortedTimeStamp: new Date().toISOString(),
+              })
+            )
+          )
+
+          // Update local state with new positions
           const updatedProjectData = {
             ...projectData,
-            tasks: projectData.tasks.map((task) =>
-              task.id === parseInt(taskId)
-                ? { ...task, position: newPosition }
-                : task
-            ),
+            tasks: projectData.tasks.map((task) => {
+              const update = tasksToUpdate.find(t => t.id === task.id)
+              return update ? { ...task, position: update.position } : task
+            }),
           }
           setProjectData(updatedProjectData)
 
-          await apiPatchTask(parseInt(taskId), {
-            position: newPosition,
-            sortedTimeStamp: new Date(),
-          })
         } catch (error) {
           console.error("Failed to update task position:", error)
           setProjectData(projectData)
@@ -716,8 +751,8 @@ export function GlobalProvider({ children }) {
       }
     }
     // drag column
-    else if (active.id.startsWith("column-")) {
-      const draggedColumnId = active.id.replace("column-", "")
+    else if (activeIdStr.startsWith("column-")) {
+      const draggedColumnId = activeIdStr.replace("column-", "")
       const targetColumnId = over.id
 
       if (draggedColumnId === targetColumnId) return
@@ -799,6 +834,8 @@ export function GlobalProvider({ children }) {
     handlerInviteProjectmate,
     handlerRemoveProjectmate,
     handlerResetPassword,
+    setUpdateCustomer,
+    setUpdateProject,
   }
 
   return (

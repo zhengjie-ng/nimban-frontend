@@ -42,26 +42,26 @@ export function NavProjects({ showHidden }) {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarMenuSub>
-                {sortedProjects?.map((project) => (
-                  <SidebarMenuSubItem key={project?.id}>
+                {sortedProjects?.filter(project => project).map((project) => (
+                  <SidebarMenuSubItem key={project.id}>
                     {project.hidden === false && (
                       <div className="flex items-center justify-between">
                         <SidebarMenuSubButton asChild>
                           <span
                             onClick={() => ctx.handlerSelectProject(project.id)}
                           >
-                            {project?.name}
+                            {project.name}
                           </span>
                         </SidebarMenuSubButton>
-                        <DropProjectOptions id={project?.id} />
+                        <DropProjectOptions id={project.id} />
                       </div>
                     )}
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>
               <SidebarMenuSub>
-                {sortedProjects?.map((project) => (
-                  <SidebarMenuSubItem key={project?.id}>
+                {sortedProjects?.filter(project => project).map((project) => (
+                  <SidebarMenuSubItem key={project.id}>
                     {project.hidden === true && showHidden === true && (
                       <div className="flex items-center justify-between">
                         <SidebarMenuSubButton asChild>
@@ -69,10 +69,10 @@ export function NavProjects({ showHidden }) {
                             className="italic opacity-70"
                             onClick={() => ctx.handlerSelectProject(project.id)}
                           >
-                            {project?.name}
+                            {project.name}
                           </span>
                         </SidebarMenuSubButton>
-                        <DropProjectOptions id={project?.id} />
+                        <DropProjectOptions id={project.id} />
                       </div>
                     )}
                   </SidebarMenuSubItem>

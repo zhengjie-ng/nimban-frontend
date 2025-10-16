@@ -81,7 +81,6 @@ function TaskColumn({ taskColumn }) {
         <div className="flex">
           {taskColumn.name} ({sortedTasks.length})
         </div>
-        {/* <Button onClick={() => console.log("Delete Item")}>Delete</Button> */}
         <DropColumnOptions id={taskColumn.id} name={taskColumn.name} />
       </div>
 

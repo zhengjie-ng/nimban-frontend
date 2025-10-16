@@ -34,13 +34,6 @@ export function NavUser({ user = {} }) {
   const ctx = useContext(GlobalContext)
   const isAdmin = localStorage.getItem("isAdmin") === "true"
 
-  console.log(
-    "NavUser - isAdmin:",
-    isAdmin,
-    "localStorage:",
-    localStorage.getItem("isAdmin")
-  )
-
   if (!ctx) {
     return null
   }
